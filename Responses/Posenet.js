@@ -8,7 +8,7 @@ function posenetResponse(message) {
   const previous = posenet_result;
   posenet_result = result;
   if (!previous || JSON.stringify(result.position) != JSON.stringify(previous.position)) {
-    positionMonitor.change(result);
+    positionMonitor.change(result.position, result);
   }
 }
 
@@ -35,11 +35,11 @@ PositionMonitor.prototype = {
         );
     },
 
-    change: function (o, thisObj) {
-        sendDebugMessage("Notifying observers " + this.handlers);
+    change: function (pos, res, thisObj) {
+        sendDebugMessage("Notifying " + JSON.stringify(pos) + " to observers " + this.handlers);
         var scope = thisObj || window;
         this.handlers.forEach(function (item) {
-            item.call(scope, o);
+            item.call(scope, pos, res);
         });
     }
 }
