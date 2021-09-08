@@ -61,6 +61,7 @@ function stopStrokingMessage() {
     if (isChance(80) && !isInChastity()) {
         playSound("Audio/Spicy/Stroking/StopStroking/*.mp3");
     }
+    positionMonitor.unsubscribe(strokingPositionFar);
     if (isStroking()) {
         stopStroking();
     }
@@ -173,9 +174,57 @@ function resumeStroking(wasStroking) {
     }
 }
 
+let moveAnswers = [
+  "so I can %Watch% you as you stroke %MyYour% %Cock%.",
+  "so I can %Watch% you as you stroke %MyYour% %Cock%. %PetName%",
+  "so I can %Watch% you while you follow my commands.",
+  "so I can %Watch% you",
+  "so I can %Watch% you %PetName%",
+  "",
+];
+
+let distanceAnswers = [
+  "You need to move back ",
+  "Move further back ",
+  "You need to Move much further back ",
+  "Seriously, move much further back ",
+];
+
+function strokingPositionFar(pos) {
+  sendDebugMessage("strokingPositionFar: pos=" + JSON.stringify(pos) + " this=" + JSON.stringify(this));
+  if (pos) {
+    if (pos.far && this.far) {
+      return;
+    }
+    this.count = this.count || 0;
+    this.far = pos.far;
+    if (pos.far) {
+      sendMessage("That is a nice view -- I can make sure that you follow my every command.");
+      this.count = 0;
+    } else {
+      sendMessage(distanceAnswers[Math.min(this.count, distanceAnswers.length - 1)] + moveAnswers[randomInteger(0, moveAnswers.length - 1)]);
+      this.count += 1;
+    }
+  } 
+}
 
 function startStrokingSpicy() {
     readyForStroking();
+
+    var position = getSubPosition();
+
+    positionMonitor.subscribe(strokingPositionFar);
+    while (true) {
+      position = getSubPosition();
+      sendDebugMessage("Stroking Position Check: " + JSON.stringify(position));
+      if (!position) {
+        break;
+      } 
+      if (position.far) {
+        break;
+      }
+      wait(0.2);
+    }
 
     setAudioBlocked(true);
     sendMessage("%StartStroking%", 0);

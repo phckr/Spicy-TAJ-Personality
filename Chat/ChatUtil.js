@@ -518,7 +518,10 @@ function createAnswerInput(listOfOptions) {
     answerObject.setAnswer(null);
 
     answerObject.setStartedAt(new Date().getTime());
-    TeaseAI.application.waitPossibleScripThread(answerObject.getMillisTimeout());
-    answerObject.checkTimeout();
+
+    while (!answerObject.getAnswer() && !answerObject.isTimeout()) {
+      TeaseAI.application.sleepPossibleScripThread(200);
+      answerObject.checkTimeout();
+    }
     return answerObject;
 }

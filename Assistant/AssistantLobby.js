@@ -105,7 +105,47 @@
     }
 }
 
+function mustBePresent(pos) {
+  if (pos) {
+    if (pos.present) {
+      sendVirtualAssistantMessage("Excellent, now %DomHonorific% will be able to see your sorry body.");
+    } else {
+      sendVirtualAssistantMessage("Your %DomHonorific% won't be happy. Get that camera working, %SlaveName%.");
+    }
+  }
+}
+
+function checkCamera() {
+  var position = getSubPosition();
+
+  if (position) {
+    // They have a camera
+    if (!position.present) {
+      sendVirtualAssistantMessage("%DomHonorific% wants to be able to see you.");
+      sendVirtualAssistantMessage("Please aim your camera at yourself.");
+
+      positionMonitor.subscribe(mustBePresent);
+      var start = Date.now();
+      while (Date.now() < start + 60000) {
+        wait(0.5);
+        position = getSubPosition();
+        sendDebugMessage("After wait, position = " + JSON.stringify(position));
+        if (!position || position.present) {
+          break;
+        }
+      }
+      positionMonitor.unsubscribe(mustBePresent);
+    }
+  }
+  if (position) {
+    sendDebugMessage("Camera status: " + JSON.stringify(position));
+  } else {
+    sendDebugMessage("No camera detected");
+  }
+}
+
 function startSession() {
+
     if (!isVar(VARIABLE.LAST_TEASE_SESSION) || getDate(VARIABLE.LAST_TEASE_SESSION).clone().addHour(16).hasPassed()) {
         if (getVar(VARIABLE.PUNISHMENT_POINTS) > getPunishmentPointsBadThreshold()) {
             sendVirtualAssistantMessage("Session denied %SlaveName%");
@@ -126,6 +166,8 @@ function startSession() {
 
             return;
         }
+
+        checkCamera();
 
         sendVirtualAssistantMessage(random("Launching", "Initiating", "Starting", "Establishing") + " session with %DomHonorific%");
         run("Session/StartSession.js");
