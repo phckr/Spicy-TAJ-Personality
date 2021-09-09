@@ -54,6 +54,11 @@ if (tryRunModuleFetchId(getDefaultModulesSinceRun(), MODULE.STROKING)) {
     //If we have any clamps on the cock we should move them away
     readyForStroking();
 
+    if (getSubPosition()) {
+      let answer = sendYesOrNoQuestionTimeout("Remember to stare at the pictures without moving. Are you looking right now?", 10);
+      positionMonitor.subscribe(headHoldChecker);
+    }
+
     sendMessage("We are gonna start by warming you up a little... ");
     sendMessage("Start stroking slowly");
     sendMessage("When you start to hear the pace you are gonna stroke to the beat");
@@ -82,6 +87,28 @@ if (tryRunModuleFetchId(getDefaultModulesSinceRun(), MODULE.STROKING)) {
     startStrokeTraining();
 }
 
+function headHoldChecker(pos) {
+  this.decrements = this.decrements || 0;
+  this.lastDecrement = this.lastDecrement || 0;
+  if (!pos.headHold) {
+    if (Date.now() - this.lastDecrement > 30000) {
+      var edges_done = getVar(VARIABLE.STROKE_TRAINING_EDGES_DONE, 0);
+      if (edges_done > 1 && this.decrements < 2) {
+	this.decrements += 1;
+        this.lastDecrement = Date.now();
+	setTempVar(VARIABLE.STROKE_TRAINING_EDGES_DONE, edges_done - 1);
+	sendMessage("You must keep staring at the pictures without moving. More training required.");
+        this.lastWasHold = false;   // prevent other message
+      }
+    } 
+
+    if (this.lastWasHold) {
+      sendMessage("I saw you move. You must keep staring at the pictures without moving.");
+    }
+  }
+  this.lastWasHold = pos.headHold;
+}
+
 function startStrokeTraining() {
     let timeToIncreaseLevel = 0;
     setTempVar('timeToIncreaseLevel', timeToIncreaseLevel);
@@ -93,6 +120,7 @@ function startStrokeTraining() {
     while (true) {
         //Interruption occurred
         if(getVar(VARIABLE.STROKE_TRAINING_EDGES_DONE) !== edgesAtStart || !getVar(VARIABLE.STROKE_TRAINING_ACTIVE, false)) {
+	    positionMonitor.unsubscribe(headHoldChecker);
             return;
         }
 
@@ -134,6 +162,8 @@ function startStrokeTraining() {
         if (isChance(30)) continue;
         showTeaseImage(randomInteger(5, 10));
     }
+
+    positionMonitor.unsubscribe(headHoldChecker);
 
     if (level >= 50) {
         stopStrokingMessage();
@@ -246,6 +276,7 @@ function strokeTrainingEdge() {
 }
 
 function endStrokeTraining() {
+    positionMonitor.unsubscribe(headHoldChecker);
     setTempVar(VARIABLE.STROKE_TRAINING_ACTIVE, false);
     //run("Session/Modules/DecideModule.js");
 }

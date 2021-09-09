@@ -95,3 +95,18 @@ function checkEndIntroductions() {
     }
 }
 
+/**
+ * Picks a theme module to run between all the actual modules
+ */
+function pickTheme() {
+  var themesPath = getPersonalityPath() + "/Session/Themes";
+  if (getFile(themesPath).exists()) {
+    var themes = getScriptFileInFolders(themesPath + "/");
+
+    var index = randomInteger(0, Math.min(10, themes.length));
+    if (index < themes.length) {
+      return themes[index];
+    }
+  }
+  return null;
+}

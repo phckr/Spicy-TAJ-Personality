@@ -3,9 +3,16 @@
 {
     let moduleCounter = 0;
 
+    let theme = pickTheme();
+
     //End session if we only have <= 10% of session time left
     while (!hasSessionTimePassed(Math.ceil((getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0))*0.90))) {
         checkInteraction();
+
+        if (theme) {
+          sendDebugMessage("Running theme: " + theme);
+          run(theme);
+        }
 
         //Apply random toys
         interactWithRandomToys();
@@ -240,6 +247,13 @@
                 delVar(VARIABLE.CHASTITY_REMOVE_LATER);
             }
         }
+    }
+
+    if (theme) {
+      sendDebugMessage("Running theme: " + theme);
+      setTempVar("themePossibleSessionEnd", 1);
+      run(theme);
+      setTempVar("themePossibleSessionEnd", 0);
     }
 
     //Maybe prolong session if we haven't already
