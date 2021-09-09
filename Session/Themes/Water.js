@@ -1,5 +1,6 @@
 {
   const GLASSES = 5;
+  const numberNames = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 
   // This will get run before the session starts and between each module and at the end
   var startTime = getVar("waterStartTime", 0);
@@ -13,13 +14,13 @@
   var prolongedSessionTime = getVar(VARIABLE.PROLONGED_SESSION_TIME, 0);
   var possibleSessionEnd = getVar("themePossibleSessionEnd", 0);
 
-  if (!possibleSessionEnd && (RAPID_TESTING || Date.now() - getVar("waterLastAction", 0) > 1000 * 60 * 13)) {
+  if (!possibleSessionEnd && (RAPID_TESTING || Date.now() - getVar("waterLastAction", 0) > 1000 * 60 * 10)) {
     var visitNumber = getVar("waterVisitNumber", 0);
     setTempVar("waterVisitNumber", visitNumber + 1);
 
     if (visitNumber == 0) {
       sendMessage("I want to try something a little different during our session today.");
-      sendMessage("Go and fetch " + GLASSES + " 500ml water glasses and fill them with water. Also a measuring jug.");
+      sendMessage("Go and fetch " + numberNames[GLASSES] + " 500ml water glasses and fill them with water. Also a large measuring jug.");
       sendMessage("Tell me when you are back.");
       waitForBack(1000);
       sendMessage("%Good%");
@@ -36,18 +37,38 @@
       waitForDone(1000);
       sendMessage("%Good%");
       action = true;
+      if (getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0) < 130) {
+        sendMessage("I'm not sure that this session is going to be long enough to finish everything.");
+        if (sendYesOrNoQuestion("Do you want to extend it? You know what the right answer is.")) {
+	  // Add 40 minutes
+	  setTempVar(VARIABLE.PROLONGED_SESSION_TIME, 40 + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0));
+          sendMessage("I just extended the session for a short time.");
+        } else {
+          sendMessage("I'm not happy about that, and it will actually make things more difficult for you.");
+        }
+      }
+    }
+    if (visitNumber + 1 == GLASSES) {
+      setTempVar("waterAllGlassesTime", Date.now());
     }
   }
+  if (PEE_LIMIT.isHardLimit() || PEE_LIMIT.isAllowed()) {
+    var earlyPee = false;
+    if (visitNumber >= GLASSES && Date.now() - getVar("waterAllGlassesTime", 0) > 1000 * 60 * 20) {
+      if (sendYesOrNoQuestion("Do you think that you can pee now?")) {
+        sendMessage("%Good%");
+        earlyPee = true;
+      } else {
+        sendMessage("We will wait a bit longer.");
+      }
+    }
 
-  if (possibleSessionEnd) {
-    if (PEE_LIMIT.isHardLimit() || PEE_LIMIT.isAllowed()) {
-      // After all this effort....
-    } else {
+    if (possibleSessionEnd || earlyPee) {
       action = true;
       // Now for the next step
-      if (prolongedSessionTime) {
+      if (getVar("waterVolume", 0)) {
 	// Second chance to pee
-	sendMessage("Since you prolonged our session, you have another chance to increase your pee volume.");
+	sendMessage("Maybe you can pee some more now and increase your pee volume.");
       } else {
 	sendMessage("Let's see how much you can pee.");
       }
@@ -64,11 +85,11 @@
         values.remove("" + getVar("waterVolume"));
       }
       if (!values.size()) {
-	 if (volume < 200) {
+	 if (volume < 300) {
 	   sendMessage("That isn't very much. You will have to try much harder next time.");
-	 } else if (volume < 500) {
+	 } else if (volume < 600) {
 	   sendMessage("That isn't very impressive. You will have to try harder next time.");
-	 } else if (volume < 800) {
+	 } else if (volume < 900) {
 	   sendMessage("That is acceptable for a first attempt. But not enough for what I want.");
 	 } else {
 	   sendMessage("That is pretty good for a first attempt. But not enough for what I want.");
@@ -96,7 +117,7 @@
 	   }
 	 }
 
-         if (volume > 600) {
+         if (volume > 700) {
 	   sendMessage("Now put your right hand in your pee.");
 	   sendMessage("Feel the warmth.");
 	   sendMessage("Swirl it around a bit.");
@@ -105,7 +126,7 @@
 	   sendMessage("Do you want to stroke %MyYour% %Cock%?");
 	   sendMessage("I bet you do.");
 	   sendMessage("I expect you are waiting for the beat.");
-           sendMessage("But not today.");
+           sendMessage("But not today. %PetName%");
 	 } else {
            var finishQ = function() {};
 	   if (getVar("waterTasteKnown", 0) || sendYesOrNoQuestion("Do you know what your pee tastes like?")) {
@@ -141,7 +162,7 @@
       values.add("" + volume);
       setVar("waterPeeVolume", values);
       setTempVar("waterVolume", volume);
-      if (!prolongedSessionTime) {
+      if (!prolongedSessionTime || !possibleSessionEnd) {
 	sendMessage("Keep that measuring jug handy, you might be able to fill it some more.");
       }
     }
