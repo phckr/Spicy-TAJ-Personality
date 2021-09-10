@@ -5,7 +5,7 @@ const TIE_OPTION = {
         CHAIN_ANKLES: {
             id: currentBondageId++,
             sendInstructions: function () {
-                sendMessage('Tie your ankles together and leave ' + getRandomRopeLength() + ' cm of rope in between at max');
+                sendMessage('Tie your ankles together and leave %Units:' + getRandomRopeLength() + ',cm% of rope in between at max');
             },
         },
 
@@ -20,7 +20,7 @@ const TIE_OPTION = {
             id: currentBondageId++,
             sendInstructions: function () {
                 currentBodyPosition = BODY_POSITION.ON_STOMACH;
-                sendMessage('Tie your ankles together and leave ' + getRandomRopeLength() + ' cm of rope in between at max');
+                sendMessage('Tie your ankles together and leave %Units:' + getRandomRopeLength() + ',cm% of rope in between at max');
                 sendMessage('Then I want you to lie on your stomach and tie the rope connecting your ankles to your neck');
                 sendMessage('The rope should be not longer than the length requiring you to lift your feet at least in a 90 degree angle from the ground to make it work');
 
@@ -35,10 +35,10 @@ const TIE_OPTION = {
             sendInstructions: function () {
                 currentBodyPosition = BODY_POSITION.ON_STOMACH;
 
-                sendMessage('Tie your ankles together and leave ' + getRandomRopeLength() + ' cm of rope in between at max');
+                sendMessage('Tie your ankles together and leave %Units:' + getRandomRopeLength() + ',cm% of rope in between at max');
                 sendMessage('%InAddition% I want you to attach your parachute');
                 sendMessage('Then I want you to lie on your stomach and tie the rope connecting your ankles to your parachute');
-                sendMessage('The rope should be not longer than ' + getRandomRopeLength() * 2 + ' cm');
+                sendMessage('The rope should be not longer than %Units:' + getRandomRopeLength() * 2 + ',cm%');
             },
         },
     },
@@ -47,7 +47,7 @@ const TIE_OPTION = {
         CHAIN_HANDS: {
             id: currentBondageId++,
             sendInstructions: function () {
-                sendMessage('Chain your hands together and leave ' + getRandomRopeLength() + ' cm of rope in between at max');
+                sendMessage('Chain your hands together and leave %Units:' + getRandomRopeLength() + ',cm% of rope in between at max');
             },
         },
     },
@@ -56,7 +56,7 @@ const TIE_OPTION = {
         CHAIN_ANKLES_TO_HANDS: {
             id: currentBondageId++,
             sendInstructions: function () {
-                sendMessage('Chain your hands and ankles together separately and then connect your hands to your ankles with a rope of roughly ' + getRandomRopeLength() * 2 + ' cm length');
+                sendMessage('Chain your hands and ankles together separately and then connect your hands to your ankles with a rope of roughly %Units:' + getRandomRopeLength() * 2 + ',cm% length');
             },
         },
         CHAIN_HANDS_EACH_ANKLE: {

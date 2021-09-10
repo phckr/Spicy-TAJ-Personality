@@ -283,7 +283,7 @@ function sendKinkyChoreInstructions(choreType) {
         if (id === 0) {
             sendMessageBasedOnSender('I want you to tie your hands and your feet');
             sendMessageBasedOnSender('Not completely though...');
-            sendMessageBasedOnSender('Make it so that there is ' + random(10, 15) + ' cm string left giving you a little mobility %Lol%');
+            sendMessageBasedOnSender('Make it so that there is %Units:' + random(10, 15) + ',cm% string left giving you a little mobility %Lol%');
             sendMessageBasedOnSender('I am generous Assistant... %Grin%');
             sendMessageBasedOnSender('Go ahead and tie yourself up %SlaveName%', 20);
             sendMessageBasedOnSender('Are you done tying yourself?');
@@ -335,7 +335,7 @@ function sendKinkyChoreInstructions(choreType) {
                     PARACHUTE_TOY.setToyOn(true);
                     sendMessageBasedOnSender('I want you to attach your parachute on to %MyYour% %Balls%');
 
-                    sendMessageBasedOnSender('Add some weight to it. At least ' + getWeightForParachute() / 2 + 'kg %Grin%');
+                    sendMessageBasedOnSender('Add some weight to it. At least %Units:' + getWeightForParachute() / 2 + ',kg% %Grin%');
 
                     sendMessageBasedOnSender('Tell me when you are done %SlaveName%');
                     waitForDone(1000);
@@ -362,7 +362,7 @@ function sendKinkyChoreInstructions(choreType) {
                 }
 
                 sendMessageBasedOnSender('Tie a rope from the handcuffs to your collar');
-                sendMessageBasedOnSender('It shouldn\'t be more than 30-40 cm long');
+                sendMessageBasedOnSender('It shouldn\'t be more than %Units:40,cm% long');
 
                 sendMessageBasedOnSender('Tell me when you are done %SlaveName%');
                 waitForDone(1000);
@@ -380,7 +380,7 @@ function sendKinkyChoreInstructions(choreType) {
                 sendMessageBasedOnSender('If you have it I want you to handcuff yourself, if not be "creative"...');
                 sendMessageBasedOnSender('I want you to put ' + 2 + pluralize('peg', 2) + ' on your balls');
                 sendMessageBasedOnSender('Tie a rope from the handcuffs to the pegs');
-                sendMessageBasedOnSender('It shouldn\'t be more than 30-40 cm long %Grin%');
+                sendMessageBasedOnSender('It shouldn\'t be more than %Units:40,cm% long %Grin%');
 
                 sendMessageBasedOnSender('Tell me when you are done %SlaveName%');
                 waitForDone(1000);

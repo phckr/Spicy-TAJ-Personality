@@ -87,9 +87,9 @@
         sendMessage(random("Think she would be ", "Do you believe she would be ") + random("disgusted?", "excited?", "interested?"));
         sendMessage(random("Maybe she would be turned on?", "Perhaps she would be calling all of her friends", "Maybe she would never talk to you again!"));
         sendMessage(random("Imagine her face as she receives my text messages", "Can you imagine her reaction as she sees all those ugly images of you"));
-        showImage('Images/Spicy/SelfHumiliation/*.jpg', 5);
-        showImage('Images/Spicy/SelfHumiliation/*.jpg', 5);
-        showImage('Images/Spicy/SelfHumiliation/*.jpg', 5);
+        showImage('Images/Spicy/SelfHumiliation/*', 5);
+        showImage('Images/Spicy/SelfHumiliation/*', 5);
+        showImage('Images/Spicy/SelfHumiliation/*', 5);
         sendMessage(random("Quite nice", "Lovely pictures"));
         let answer = sendInput(random("Aren't they?", "Right?"), 7);
 
@@ -111,7 +111,7 @@
                 sendMessage(random("This is the funniest thing ever!", "I can't imagine anything less sexy") + ' %Lol%');
             } else {
                 for (let x = 0; x < 30; x++) {
-                    showImage('Images/Spicy/SelfHumiliation/*.jpg', 2);
+                    showImage('Images/Spicy/SelfHumiliation/*', 2);
                 }
 
                 sendMessage(random('I think I might invite', 'Perhaps I should invite', 'I bet you wouldn\'t mind if I were to invite') + ' ' + getVar('blackmailName1') + ', ' + getVar('blackmailName2') + ' and ' + getVar('blackmailName3') + ' over');

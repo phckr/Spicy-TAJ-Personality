@@ -255,12 +255,12 @@ function workmodeExercise(exercise) {
 
             break;
         case 11:
-            sendVirtualAssistantMessage("%SlaveName% right now you're gonna do " + random("20", "30", "40") + " bicep curls with a " + random("10", "12", "15") + " pound weight.");
+            sendVirtualAssistantMessage("%SlaveName% right now you're gonna do " + random("20", "30", "40") + " bicep curls with a %Units:" + random("5", "6", "7") + ",kg% weight.");
             sendVirtualAssistantMessage("When you're done just return to whatever you were doing...");
 
             break;
         case 12:
-            sendVirtualAssistantMessage("%SlaveName% right now you're gonna do " + random("20", "25", "15") + " shoulder presses with a " + random("12", "15") + " pound weight.");
+            sendVirtualAssistantMessage("%SlaveName% right now you're gonna do " + random("20", "25", "15") + " shoulder presses with a %Units:" + random("6", "7") + ",kg% weight.");
             sendVirtualAssistantMessage("When you're done just return to whatever you were doing...");
             break;
         case 13:
@@ -375,7 +375,7 @@ function workmodeTease(tease) {
             sendVirtualAssistantMessage(random("Just watch this little slideshow while you fondle %MyYour% %Balls% %Lol%", "Fondle %MyYour% %Balls% while you watch this magnificent girl!", "Just hang back and watch this sexy slut!"));
 
             for(let x = 0; x < randomInteger(5, 13); x++) {
-                showImage("Images/Spicy/SelfHumiliation/*.jpg", 10);
+                showImage("Images/Spicy/SelfHumiliation/*", 10);
             }
 
             sendVirtualAssistantMessage(random("%SlaveName%, You look sooo hot!", "Those pictures are soo hot", "I would love to share these pictures with your friends!") + " %Grin%");

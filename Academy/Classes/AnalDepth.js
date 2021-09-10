@@ -11,7 +11,11 @@
         tasks.push('Go almost all the way out and in as far it goes using the ' + getDildo().name + ' for ' + stage*8 + ' minutes at your own speed.');
         tasks.push('Spend ' + stage*8 + ' minutes practicing to get your ' + getDildo().name + ' in as far as possible');
         tasks.push('Fuck your ' + getDildo().name + + ' for ' + stage * 8 + ' minutes at 60 bpm while going as deep as possible and only slightly out');
-        tasks.push('Push the '+ getDildo().name + ' in as far as possible and practice 5 minutes for every cm that didn\'t fit.');
+        if (unitsAreMetric()) {
+          tasks.push('Push the '+ getDildo().name + ' in as far as possible and practice 5 minutes for every cm that didn\'t fit.');
+        } else {
+          tasks.push('Push the '+ getDildo().name + ' in as far as possible and practice 10 minutes for every inch that didn\'t fit.');
+        }
 
         return tasks;
     }
@@ -67,7 +71,9 @@
                 sendMessage('Tell me %SlaveName%');
                 sendMessage('And be truthful and realistic...');
 
-                let length = createDoubleInput('Up to what length are you able to fit dildos up your %Ass% in cm right now?', 1, 100, 'That\'s not a valid number %SlaveName%', 'I don\'t think you are giving me a realistic diameter %SlaveName%');
+                let unit = getApplicableUnit("cm", "inches");
+                let length = createDoubleInput('Up to what length are you able to fit dildos up your %Ass% in " + unit + " right now?', 1, 100, 'That\'s not a valid number %SlaveName%', 'I don\'t think you are giving me a realistic diameter %SlaveName%');
+		length = convertToMetric(length, unit);
 
                 if (length < 10) {
                     sendMessage('Oh so you are a real beginner');

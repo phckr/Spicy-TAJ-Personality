@@ -136,10 +136,10 @@ switch (choice) {
 			if((pchoice==1) && (getVar("toyparachute")==true))
 			{
 			sendMessage("go get your parachute, and start putting it on", 12);
-			sendMessage("once it's on, attach " + random("1","1.5","2") +" Kg's of weight to it" );
+			sendMessage("once it's on, attach %Units:" + random("1","1.5","2") + ",kg% of weight to it" );
 			}
-			else {		sendMessage("go tie a rope around %MyYour% %Balls%, and leave a loose end about 30 cm long.", 12);
-			sendMessage("once their nice and tied up, attach " + random("1","1.5","2") +" Kg's of weight to the rope");
+			else {		sendMessage("go tie a rope around %MyYour% %Balls%, and leave a loose end about %Units:30,cm% long.", 12);
+			sendMessage("once their nice and tied up, attach %Units:" + random("1","1.5","2") +",kg% of weight to the rope");
 			}
 	   }
 		response = sendInput("are you all done getting gussied up? "); //#DT4 
@@ -199,10 +199,10 @@ switch (choice) {
 			if((pchoice==1) && (getVar("toyparachute")==true))
 			{
 			sendMessage("go get your parachute, and start putting it on", 12);
-			sendMessage("once it's on, attach " + random("1","1.5","2") +" Kg's of weight to it") ;
+			sendMessage("once it's on, attach %Units:" + random("1","1.5","2") +",kg% of weight to it") ;
 			}
-			else {		sendMessage("go tie a rope around %MyYour% %Balls%, and leave a loose end about 30 cm long.", 12);
-			sendMessage("once their nice and tied up, attach " + random("1","1.5","2") +" Kg's of weight to the rope") ;
+			else {		sendMessage("go tie a rope around %MyYour% %Balls%, and leave a loose end about %Units:30,cm% long.", 12);
+			sendMessage("once their nice and tied up, attach %Units:" + random("1","1.5","2") +",kg% of weight to the rope") ;
 			}
 	   }
 		response = sendInput("are you all done getting gussied up? "); //#DT4 

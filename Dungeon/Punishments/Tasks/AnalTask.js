@@ -88,7 +88,7 @@ const ANAL_TASK_MODIFIER = [
         id: 9,
         conflicting: [8, 5],
         sendInstructions: function (level) {
-            sendMessage('Chain your ankles together with a rope of ' + getRandomRopeLength() + 'cm length');
+            sendMessage('Chain your ankles together with a rope of %Units:' + getRandomRopeLength() + ',cm% length');
         }
     },
 

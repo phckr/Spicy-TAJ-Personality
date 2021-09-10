@@ -1,6 +1,5 @@
 {
   const GLASSES = 5;
-  const numberNames = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 
   // This will get run before the session starts and between each module and at the end
   var startTime = getVar("waterStartTime", 0);
@@ -20,7 +19,7 @@
 
     if (visitNumber == 0) {
       sendMessage("I want to try something a little different during our session today.");
-      sendMessage("Go and fetch " + numberNames[GLASSES] + " 500ml water glasses and fill them with water. Also a large measuring jug.");
+      sendMessage("Go and fetch %Number:" + GLASSES + "% %Units:500,ml% water glasses and fill them with water. Also fetch a large measuring jug.");
       sendMessage("Tell me when you are back.");
       waitForBack(1000);
       sendMessage("%Good%");
@@ -34,8 +33,14 @@
 	sendMessage("I want you to drink one of those glasses of water that you just fetched.");
       }
       sendMessage("Tell me when you are done.");
+      var drinkStart = Date.now();
       waitForDone(1000);
-      sendMessage("%Good%");
+      var drinkTime = Date.now() - drinkStart;
+      if (drinkTime > 200 * 1000) {
+         sendMessage("I'm getting tired of waiting for you to drink this water. Do it faster next time.");
+      } else {
+         sendMessage("%Good%");
+      }
       action = true;
       if (getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0) < 130) {
         sendMessage("I'm not sure that this session is going to be long enough to finish everything.");
@@ -52,17 +57,25 @@
       setTempVar("waterAllGlassesTime", Date.now());
     }
   }
-  if (PEE_LIMIT.isHardLimit() || PEE_LIMIT.isAllowed()) {
-    var earlyPee = false;
-    if (visitNumber >= GLASSES && Date.now() - getVar("waterAllGlassesTime", 0) > 1000 * 60 * 20) {
-      if (sendYesOrNoQuestion("Do you think that you can pee now?")) {
-        sendMessage("%Good%");
-        earlyPee = true;
-      } else {
-        sendMessage("We will wait a bit longer.");
+  var earlyPee = false;
+  if (visitNumber >= GLASSES && (RAPID_TESTING || Date.now() - getVar("waterAllGlassesTime", 0) > 1000 * 60 * 20)) {
+    if (sendYesOrNoQuestion("Do you think that you can pee now?")) {
+      sendMessage("%Good%");
+      earlyPee = true;
+      if (!PEE_LIMIT.isAllowed()) {
+        if (sendYesOrNoQuestion("Do you want to pee while I watch?")) {
+          if (getVar("waterAskedLimitChange", 0) == 0) {
+	    PEE_LIMIT.askForLimitChange(LIMIT_ADDRESS.DOMME);
+	    setTempVar("waterAskedLimitChange", 1);
+	  }
+        }
       }
+    } else {
+      sendMessage("We will wait a bit longer.");
     }
+  }
 
+  if (PEE_LIMIT.isAllowed()) {
     if (possibleSessionEnd || earlyPee) {
       action = true;
       // Now for the next step
@@ -72,9 +85,35 @@
       } else {
 	sendMessage("Let's see how much you can pee.");
       }
+      var position = getSubPosition();
+      if (position) {
+        sendMessage("Get your measuring jug.");
+      }
+      var noAction1 = 0;
+      var noAction2 = 0;
+      while (position) {
+        if (!position.present) {
+          if (!noAction1) {
+	    sendWebControlJson(JSON.stringify({speak: "Come back here. I want to %Watch% you peeing."}));
+          }
+          noAction1 = (noAction1 + 1) % 5;
+          wait(1);
+        } else if (!position.far) {
+          if (!noAction2) {
+            sendMessage("Move back so I can %Watch% you peeing. %PetName%");
+          }
+          noAction2 = (noAction2 + 1) % 5;
+          wait(1);
+        } else {
+          break;
+        }
+        position = getSubPosition();
+      }
       sendMessage("I command you to fill that measuring jug with as much pee as possible.");
       sendMessage("The more the better as I have some ideas on how to use it.");
       sendMessage("Tell me when you have finished peeing into that jug.");
+      wait(10);
+      takeSubPhotoAndSaveIntoFolder("Images/Spicy/SelfHumiliation", "pee_");
       waitForDone(300);
       sendMessage("%Good%");
       let volume = createIntegerInput("Tell me how many ml of pee you managed to produce.", 0, 3000, "That isn't a valid answer", "That doesn't seem likely -- please read the jug again.");
@@ -140,6 +179,7 @@
 		} else {
 		  sendMessage("There is always a next time.");
                 }
+             }
            } else {
 	     finishQ = function () {
 	       sendMessage("I'm happy that I have introduced you to the joys of pee play.");
@@ -166,11 +206,13 @@
 	sendMessage("Keep that measuring jug handy, you might be able to fill it some more.");
       }
     }
-  }
 
-  if (prolongedSessionTime && prolongedSessionTime < 25) {
-    // Give us a longer session
-    setTempVar(VARIABLE.PROLONGED_SESSION_TIME, prolongedSessionTime + randomInteger(20, 30));
+    if (prolongedSessionTime && prolongedSessionTime < 25) {
+      // Give us a longer session
+      setTempVar(VARIABLE.PROLONGED_SESSION_TIME, prolongedSessionTime + randomInteger(20, 30));
+    }
+  } else {
+    sendDebugMessage("User doesn't want pee play");
   }
 
   if (action) {

@@ -151,7 +151,9 @@ function askForMaxDiameter() {
         sendMessage('Tell me %SlaveName%');
         sendMessage('And be truthful and realistic...');
 
+        let units = getApplicableUnit("cm", "inches");
         let diameter = createDoubleInput('Up to what diameter are you able to fit dildos up your %Ass% in cm right now?', 1, 15, 'That\'s not a valid number %SlaveName%', 'I don\'t think you are giving me a realistic diameter %SlaveName%');
+        diameter = convertToMetric(diameter, units);
 
         if (diameter < 4) {
             sendMessage('Oh so you are a real beginner');

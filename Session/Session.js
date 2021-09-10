@@ -101,7 +101,7 @@ function checkEndIntroductions() {
 function pickTheme() {
   var themesPath = getPersonalityPath() + "/Session/Themes";
   if (getFile(themesPath).exists()) {
-    var themes = getScriptFileInFolders(themesPath + "/");
+    var themes = getScriptFilesInFolder(themesPath + "/");
 
     var index = randomInteger(0, Math.min(10, themes.length));
     if (index < themes.length) {

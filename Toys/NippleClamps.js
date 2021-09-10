@@ -118,7 +118,7 @@ function putNippleClampsOn() {
 
         if(feelsLikePunishingSlave()) {
             sendMessageBasedOnSender('Now... %Grin%');
-            sendMessageBasedOnSender('Go ahead and attach around ' + getNippleClampWeight() + 'g weight to them');
+            sendMessageBasedOnSender('Go ahead and attach around %Units:' + getNippleClampWeight() + ',g% weight to them');
             sendMessageBasedOnSender('I don\'t care how you do it. Get a piece of string and attach something to them');
             sendMessageBasedOnSender('Report to me when you are ready');
             waitForDone();

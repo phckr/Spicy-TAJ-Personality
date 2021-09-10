@@ -16,7 +16,7 @@ function getWeightForParachute() {
 }
 
 function attachWeightToParachute() {
-    sendMessage('%SlaveName% go ahead and attach ' + getWeightForParachute() + "kg to your parachute");
+    sendMessage('%SlaveName% go ahead and attach %Units:' + getWeightForParachute() + ",kg% to your parachute");
     sendMessage('I don\'t care if you use weights, water bottles, a bucket or anything else');
     sendMessage('Tell me when yfou are ready to continue');
     waitForDone(9999);
