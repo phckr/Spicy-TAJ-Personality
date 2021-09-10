@@ -1,9 +1,17 @@
 addResponseRegex("taj-posenet-data");
 
 let posenet_result = null;
+let posenet_image_requests = {};
 
 function posenetResponse(message) {
   const result = JSON.parse(message.substring(17));
+  if (result.command) {
+    sendDebugMessage("Command: " + JSON.stringify(result)); 
+    if (result.command == "vocab") {
+      sendWebControlJson(JSON.stringify({response: result.command, arg: result.arg, result: replaceVocab(result.arg)}));
+    }
+    return;
+  }
   sendDebugMessage("Posenet: " + JSON.stringify(result.position)); 
   const previous = posenet_result;
   result.when = Date.now();
@@ -14,6 +22,47 @@ function posenetResponse(message) {
     // positionChange.change(result.position, result);
   }
   sendDebugMessage("Posenet handling latency = " + (Date.now() - result.when) + "ms");
+  if (result.images) {
+    var imgs = result.images;
+    for (var i = 0; i < imgs.length; i++) {
+      sendDebugMessage("Handling photo " + imgs[i].name);
+      if (posenet_image_requests[imgs[i].name]) {
+        posenet_image_requests[imgs[i].name](imgs[i].value);
+        delete posenet_image_requests[imgs[i].name];
+      }
+    }
+  }
+}
+
+function getSubRandomFilename(prefix) {
+  return (prefix ? prefix : "") + (Math.random().toString(36) + Math.random().toString(36)).replace(/\./g, "");
+}
+
+function takeSubPhotoAndSaveInFolder(folder, prefix) {
+  takeSubPhoto(function (data) {
+    writeSubPhotoToFile(data, folder + "/" + getSubRandomFilename(prefix));
+  });
+}
+
+function writeSubPhotoToFile(data, filePath) {
+  let binaryData = java.util.Base64.getMimeDecoder().decode(data.split('base64,')[1]);
+  let imageType = data.substring(11, 100);
+  imageType = imageType.split(";")[0];
+  if (imageType == "jpeg") {
+    imageType = "jpg";
+  }
+  filePath = filePath + "." + imageType;
+  let stream = new java.io.FileOutputStream(filePath);
+  stream.write(binaryData);
+  stream.close();
+
+  return filePath;
+}
+
+function takeSubPhoto(done) {
+  var name = Math.random().toString(36);
+  posenet_image_requests[name] = done;
+  sendWebControlJson(JSON.stringify({photo:name}));
 }
 
 function getRecentPosenetResult() {
