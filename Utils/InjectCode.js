@@ -1,4 +1,19 @@
 //run("Session/StartSession.js");
+MODULE_HISTORY.clearHistory();
+run("Session/Themes/Water.js");
+run("Session/Themes/Water.js");
+setTempVar("waterVisitNumber", 5);
+run("Session/Themes/Water.js");
+run("Session/Themes/Water.js");
+run("Session/Themes/Water.js");
+setTempVar("themePossibleSessionEnd", 1);
+run("Session/Themes/Water.js");
+setTempVar("themePossibleSessionEnd", 0);
+setTempVar(VARIABLE.PROLONGED_SESSION_TIME, 15);
+run("Session/Themes/Water.js");
+run("Session/Themes/Water.js");
+setTempVar("themePossibleSessionEnd", 1);
+run("Session/Themes/Water.js");
 
 /*function getChastityEXPForLevel(level) {
     let loopLevel = 1;

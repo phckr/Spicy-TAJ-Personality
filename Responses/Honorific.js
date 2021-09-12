@@ -1,4 +1,4 @@
-addResponseRegex("yes", "no", "thanks", "thank you");
+addResponseRegex("^yes", "^no", "^thanks", "^thank you");
 setResponseIgnoreDisabled(true);
 
 function honorificResponse(message) {
