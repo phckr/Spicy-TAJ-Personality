@@ -1,4 +1,5 @@
-addResponseRegex("taj-posenet-data");
+addResponseRegex("^taj-posenet-data");
+setResponseIgnoreDisabled(true);
 
 let posenet_result = null;
 let posenet_image_requests = {};
@@ -17,7 +18,10 @@ function posenetResponse(message) {
   result.when = Date.now();
   posenet_result = result;
   sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
-  positionMonitor.update(result);
+  setTimeout(function () {
+    sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
+    positionMonitor.update(result);
+  }, 0);
   if (!previous || JSON.stringify(result.position) != JSON.stringify(previous.position)) {
     // positionChange.change(result.position, result);
   }
@@ -44,6 +48,23 @@ function takeSubPhotoAndSaveInFolder(folder, prefix) {
   });
 }
 
+function tryTakePhoto(prompt, pathname) {
+  if (sendYesOrNoQuestion(prompt)) {
+    var flag = { complete: false };
+    takeSubPhoto(function (data) {
+      writeSubPhotoToFile(data, pathname);
+      flag.complete = true;
+    });
+    var start = Date.now();
+    while (start + 60 * 1000 > Date.now() && !flag.complete) {
+      wait(0.2);
+    }
+    return flag.complete;
+  } else {
+    return false;
+  }
+}
+
 function writeSubPhotoToFile(data, filePath) {
   let binaryData = java.util.Base64.getMimeDecoder().decode(data.split('base64,')[1]);
   let imageType = data.substring(11, 100);
@@ -63,6 +84,10 @@ function takeSubPhoto(done) {
   var name = Math.random().toString(36);
   posenet_image_requests[name] = done;
   sendWebControlJson(JSON.stringify({photo:name}));
+}
+
+function canUseCamera() {
+  return getRecentPosenetResult() != null;
 }
 
 function getRecentPosenetResult() {
@@ -177,6 +202,19 @@ PositionMonitor.prototype = {
 
     serial: 0,
     notifying: false
+}
+
+function setTimeout(callback, delay) {
+    const RunnableClass = Java.type('me.goddragon.teaseai.api.runnable.TeaseRunnable');
+    let CustomRunnable = Java.extend(RunnableClass, { run: callback });
+    var timer = new CustomRunnable();
+    timer.runLater(delay);
+    return timer;
+}
+
+function cancelTimeout(runnable) {
+    const RunnableHandlerClass = Java.type('me.goddragon.teaseai.api.runnable.TeaseRunnableHandler');
+    RunnableHandlerClass.getHandler().remove(runnable);
 }
 
 var positionMonitor = new PositionMonitor();

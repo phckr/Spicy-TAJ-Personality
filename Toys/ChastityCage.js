@@ -890,11 +890,15 @@ function setupNewCage() {
         }
     }
 
-    sendVirtualAssistantMessage('Please make sure to add a picture of your cage named like your chastity cage to your Toys/Chastity Cages folder.', false);
-    sleep(2);
-    sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the chastity cages folder', false);
-    sleep(2);
-    sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    if (canUseCamera() && tryTakePhoto("Hold it in front of the camera and tell me when you are ready.", "Images/Spicy/Toys/Chastity Cages")) {
+      sendVirtualAssistantMessage('This is what I saw', false, true);
+    } else {
+      sendVirtualAssistantMessage('Please make sure to add a picture of your cage named like your chastity cage to your Toys/Chastity Cages folder.', false);
+      sleep(2);
+      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the chastity cages folder', false);
+      sleep(2);
+      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    }
     showImage(getChastityImagePath(name), 5);
 
     sendVirtualAssistantMessage('We are gonna use a scale of 1 to 5 to measure the size of the cage');

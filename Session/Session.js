@@ -103,7 +103,7 @@ function pickTheme() {
   if (getFile(themesPath).exists()) {
     var themes = getScriptFilesInFolder(themesPath + "/");
 
-    var index = randomInteger(0, Math.min(10, themes.length));
+    var index = randomInteger(0, Math.min(20, themes.length));
     if (index < themes.length) {
       return themes[index];
     }

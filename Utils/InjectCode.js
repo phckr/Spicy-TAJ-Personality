@@ -1,4 +1,8 @@
+tryTakePhoto("Ready?", "Images/test");
+showImage("Images/test.*");
+sendMessage("Done!");
 //run("Session/StartSession.js");
+if (0) {
 MODULE_HISTORY.clearHistory();
 run("Session/Themes/Water.js");
 run("Session/Themes/Water.js");
@@ -14,6 +18,7 @@ run("Session/Themes/Water.js");
 run("Session/Themes/Water.js");
 setTempVar("themePossibleSessionEnd", 1);
 run("Session/Themes/Water.js");
+}
 
 /*function getChastityEXPForLevel(level) {
     let loopLevel = 1;
