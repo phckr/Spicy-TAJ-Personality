@@ -65,11 +65,15 @@ SKIRT_TOY.setupNewToy = function() {
 
     let skirt = SKIRT_TOY.createToyInstance(name, height, color);
 
-    sendVirtualAssistantMessage('Please make sure to add a picture of your skirt named accordingly to your ' + SKIRT_TOY.getImageFolder().getPath() +  ' folder.', false);
-    sleep(2);
-    sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the folder', false);
-    sleep(2);
-    sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    if (canUseCamera() && tryTakePhoto("Hold your skirt in front of the camera and tell me when you are ready.", skirt.getImagePath())) {
+      sendVirtualAssistantMessage('This is what I saw', false, true);
+    } else {
+      sendVirtualAssistantMessage('Please make sure to add a picture of your skirt named accordingly to your ' + SKIRT_TOY.getImageFolder().getPath() +  ' folder.', false);
+      sleep(2);
+      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the folder', false);
+      sleep(2);
+      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    }
     showImage(skirt.getImagePath(), 5);
 
     SKIRT_TOY.toyInstances.push(skirt);

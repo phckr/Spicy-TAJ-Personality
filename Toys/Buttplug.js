@@ -790,11 +790,15 @@ function setupNewButtplug() {
         }
     }
 
-    sendVirtualAssistantMessage('Please make sure to add a picture of your buttplug named like your buttplug to your Toys/Buttplugs folder.', false);
-    sleep(2);
-    sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the buttplugs folder', false);
-    sleep(2);
-    sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    if (canUseCamera() && tryTakePhoto("Hold your buttplug in front of the camera and tell me when you are ready.", getButtplugImagePath(name))) {
+      sendVirtualAssistantMessage('This is what I saw', false, true);
+    } else {
+      sendVirtualAssistantMessage('Please make sure to add a picture of your buttplug named like your buttplug to your Toys/Buttplugs folder.', false);
+      sleep(2);
+      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the buttplugs folder', false);
+      sleep(2);
+      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    }
     showImage(getButtplugImagePath(name), 5);
 
     sendVirtualAssistantMessage('Next please tell me the length of the buttplug in centimeters (measure everything that\'s insertable)', 0);

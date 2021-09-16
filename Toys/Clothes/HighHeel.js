@@ -44,11 +44,15 @@ HIGH_HEEL_TOY.setupNewToy = function() {
 
     let heel = HIGH_HEEL_TOY.createToyInstance(name, height, color);
 
-    sendVirtualAssistantMessage('Please make sure to add a picture of your high heel named like your high heel to your Toys/High Heels folder.', false);
-    sleep(2);
-    sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the high heels folder', false);
-    sleep(2);
-    sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    if (canUseCamera() && tryTakePhoto("Hold your high heels in front of the camera and tell me when you are ready.", heel.getImagePath())) {
+      sendVirtualAssistantMessage('This is what I saw', false, true);
+    } else {
+      sendVirtualAssistantMessage('Please make sure to add a picture of your high heel named like your high heel to your Toys/High Heels folder.', false);
+      sleep(2);
+      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the high heels folder', false);
+      sleep(2);
+      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    }
     showImage(heel.getImagePath(), 5);
 
     HIGH_HEEL_TOY.toyInstances.push(heel);

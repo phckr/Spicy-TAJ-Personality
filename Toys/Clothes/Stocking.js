@@ -89,11 +89,15 @@ function askForToyType(toyObject, types, reference = undefined) {
 }
 
 function createToyAndCheckImage(toy, toyObject) {
-    sendVirtualAssistantMessage('Please make sure to add a picture of your ' + toyObject.name + ' named accordingly to your ' + toyObject.getImageFolder().getPath() +  ' folder.', false);
-    sleep(2);
-    sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + toy.name + '.jpg" to the folder', false);
-    sleep(2);
-    sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    if (canUseCamera() && tryTakePhoto("Hold your " + toyObject.name + " in front of the camera and tell me when you are ready.", toy.getImagePath())) {
+      sendVirtualAssistantMessage('This is what I saw', false, true);
+    } else {
+      sendVirtualAssistantMessage('Please make sure to add a picture of your ' + toyObject.name + ' named accordingly to your ' + toyObject.getImageFolder().getPath() +  ' folder.', false);
+      sleep(2);
+      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + toy.name + '.jpg" to the folder', false);
+      sleep(2);
+      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+    }
     showImage(toy.getImagePath(), 5);
 
     toyObject.toyInstances.push(toy);
