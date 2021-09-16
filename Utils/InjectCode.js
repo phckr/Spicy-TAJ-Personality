@@ -1,5 +1,5 @@
-tryTakePhoto("Ready?", "Images/test");
-showImage("Images/test.*");
+setCurrentSender(SENDER_ASSISTANT);
+setupNewCage();
 sendMessage("Done!");
 //run("Session/StartSession.js");
 if (0) {

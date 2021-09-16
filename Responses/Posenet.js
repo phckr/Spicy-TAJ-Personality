@@ -76,7 +76,11 @@ function writeSubPhotoToFile(data, filePath) {
   if (imageType == "jpeg") {
     imageType = "jpg";
   }
+  if (filePath.endsWith(".*")) {
+    filePath = filePath.slice(0, -2);
+  }
   filePath = filePath + "." + imageType;
+  sendDebugMessage("About to write photo to " + filePath);
   let stream = new java.io.FileOutputStream(filePath);
   stream.write(binaryData);
   stream.close();

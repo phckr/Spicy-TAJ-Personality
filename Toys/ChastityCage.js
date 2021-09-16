@@ -890,7 +890,7 @@ function setupNewCage() {
         }
     }
 
-    if (canUseCamera() && tryTakePhoto("Hold it in front of the camera and tell me when you are ready.", "Images/Spicy/Toys/Chastity Cages")) {
+    if (canUseCamera() && tryTakePhoto("Hold it in front of the camera and tell me when you are ready.", getChastityImagePath(name))) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your cage named like your chastity cage to your Toys/Chastity Cages folder.', false);
