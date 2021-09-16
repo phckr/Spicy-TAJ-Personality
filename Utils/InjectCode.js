@@ -1,6 +1,10 @@
+if (0) {
 setCurrentSender(SENDER_ASSISTANT);
 setupNewCage();
 sendMessage("Done!");
+}
+tryTakeVideo("Ready?", "Videos/Spicy/vtest", 2000);
+showVideo("Videos/Spicy/vtest.*");
 //run("Session/StartSession.js");
 if (0) {
 MODULE_HISTORY.clearHistory();

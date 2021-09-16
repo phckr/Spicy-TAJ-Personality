@@ -3,6 +3,7 @@ setResponseIgnoreDisabled(true);
 
 let posenet_result = null;
 let posenet_image_requests = {};
+let posenet_video_requests = {};
 
 function posenetResponse(message) {
   const result = JSON.parse(message.substring(17));
@@ -36,6 +37,15 @@ function posenetResponse(message) {
       }
     }
   }
+  if (result.videos) {
+    var vids = result.videos;
+    for (var i = 0; i < vids.length; i++) {
+      sendDebugMessage("Handling video " + vids[i].name);
+      if (posenet_video_requests[vids[i].name]) {
+        posenet_video_requests[vids[i].name](vids[i].value);
+      }
+    }
+  }
 }
 
 function getSubRandomFilename(prefix) {
@@ -46,6 +56,36 @@ function takeSubPhotoAndSaveInFolder(folder, prefix) {
   takeSubPhoto(function (data) {
     writeSubPhotoToFile(data, folder + "/" + getSubRandomFilename(prefix));
   });
+}
+
+function takeSubVideoAndSaveInFolder(folder, prefix, duration) {
+  var path = folder + "/" + getSubRandomFilename(prefix);
+  takeSubVideo(function (data) {
+    writeSubVideoToFile(data, path);
+  }, duration);
+}
+
+function tryTakeVideo(prompt, pathname, duration) {
+  sendWebControlJson(JSON.stringify({largeCamera:true}));
+  if (sendYesOrNoQuestion(prompt)) {
+    var flag = { complete: false };
+    takeSubVideo(function (data) {
+      if (data) {
+        writeSubVideoToFile(data, pathname);
+      } else {
+        flag.complete = true;
+      }
+    }, duration);
+    var start = Date.now();
+    while (start + 60 * 1000 > Date.now() && !flag.complete) {
+      wait(0.2);
+    }
+    sendWebControlJson(JSON.stringify({largeCamera:false}));
+    return flag.complete;
+  } else {
+    sendWebControlJson(JSON.stringify({largeCamera:false}));
+    return false;
+  }
 }
 
 function tryTakePhoto(prompt, pathname) {
@@ -67,6 +107,24 @@ function tryTakePhoto(prompt, pathname) {
     sendWebControlJson(JSON.stringify({largeCamera:false}));
     return false;
   }
+}
+
+function writeSubVideoToFile(data, filePath) {
+  if (data) {
+    let binaryData = java.util.Base64.getMimeDecoder().decode(data.split('base64,')[1]);
+    let imageType = data.substring(11, 100);
+    imageType = imageType.split(";")[0];
+    if (filePath.endsWith(".*")) {
+      filePath = filePath.slice(0, -2);
+    }
+    filePath = filePath + "." + imageType;
+    sendDebugMessage("About to write video chunk to " + filePath);
+    let stream = new java.io.FileOutputStream(filePath, true);
+    stream.write(binaryData);
+    stream.close();
+  }
+
+  return filePath;
 }
 
 function writeSubPhotoToFile(data, filePath) {
@@ -92,6 +150,12 @@ function takeSubPhoto(done) {
   var name = Math.random().toString(36);
   posenet_image_requests[name] = done;
   sendWebControlJson(JSON.stringify({photo:name}));
+}
+
+function takeSubVideo(done, duration) {
+  var name = Math.random().toString(36);
+  posenet_video_requests[name] = done;
+  sendWebControlJson(JSON.stringify({video:name, duration:duration}));
 }
 
 function canUseCamera() {
