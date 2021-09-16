@@ -49,8 +49,10 @@ function takeSubPhotoAndSaveInFolder(folder, prefix) {
 }
 
 function tryTakePhoto(prompt, pathname) {
+  sendWebControlJson(JSON.stringify({largeCamera:true}));
   if (sendYesOrNoQuestion(prompt)) {
     var flag = { complete: false };
+    playSound("Audio/Spicy/SpecialSounds/CameraShutter.mp3");
     takeSubPhoto(function (data) {
       writeSubPhotoToFile(data, pathname);
       flag.complete = true;
@@ -59,8 +61,10 @@ function tryTakePhoto(prompt, pathname) {
     while (start + 60 * 1000 > Date.now() && !flag.complete) {
       wait(0.2);
     }
+    sendWebControlJson(JSON.stringify({largeCamera:false}));
     return flag.complete;
   } else {
+    sendWebControlJson(JSON.stringify({largeCamera:false}));
     return false;
   }
 }
