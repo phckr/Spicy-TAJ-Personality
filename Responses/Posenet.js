@@ -14,19 +14,21 @@ function posenetResponse(message) {
     }
     return;
   }
-  sendDebugMessage("Posenet: " + JSON.stringify(result.position)); 
-  const previous = posenet_result;
-  result.when = Date.now();
-  posenet_result = result;
-  sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
-  setTimeout(function () {
-    sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
-    positionMonitor.update(result);
-  }, 0);
-  if (!previous || JSON.stringify(result.position) != JSON.stringify(previous.position)) {
-    // positionChange.change(result.position, result);
+  if (result.position) {
+    sendDebugMessage("Posenet: " + JSON.stringify(result.position)); 
+    const previous = posenet_result;
+    result.when = Date.now();
+    posenet_result = result;
+    sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
+    setTimeout(function () {
+      sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
+      positionMonitor.update(result);
+    }, 0);
+    if (!previous || JSON.stringify(result.position) != JSON.stringify(previous.position)) {
+      // positionChange.change(result.position, result);
+    }
+    sendDebugMessage("Posenet handling latency = " + (Date.now() - result.when) + "ms");
   }
-  sendDebugMessage("Posenet handling latency = " + (Date.now() - result.when) + "ms");
   if (result.images) {
     var imgs = result.images;
     for (var i = 0; i < imgs.length; i++) {
@@ -89,9 +91,15 @@ function tryTakeVideo(prompt, pathname, duration) {
 }
 
 function tryTakePhoto(prompt, pathname) {
+  var flag = { complete: false };
   sendWebControlJson(JSON.stringify({largeCamera:true}));
-  if (sendYesOrNoQuestion(prompt)) {
-    var flag = { complete: false };
+
+  handlePasteSubPhoto(function (data) {
+    writeSubPhotoToFile(data, pathname);
+    flag.complete = true;
+  });
+
+  if (sendYesOrNoQuestion(prompt, null, function() { return flag.complete; })) {
     playSound("Audio/Spicy/SpecialSounds/CameraShutter.mp3");
     takeSubPhoto(function (data) {
       writeSubPhotoToFile(data, pathname);
@@ -105,7 +113,7 @@ function tryTakePhoto(prompt, pathname) {
     return flag.complete;
   } else {
     sendWebControlJson(JSON.stringify({largeCamera:false}));
-    return false;
+    return flag.complete;
   }
 }
 
@@ -150,6 +158,12 @@ function takeSubPhoto(done) {
   var name = Math.random().toString(36);
   posenet_image_requests[name] = done;
   sendWebControlJson(JSON.stringify({photo:name}));
+}
+
+function handlePasteSubPhoto(done) {
+  var name = Math.random().toString(36);
+  posenet_image_requests[name] = done;
+  sendWebControlJson(JSON.stringify({photopaste:name}));
 }
 
 function takeSubVideo(done, duration) {

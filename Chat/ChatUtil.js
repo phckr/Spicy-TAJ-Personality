@@ -334,7 +334,7 @@ function sendMakeMeProud() {
     sendMessageBasedOnSender(random('I hope you make me proud', 'Try your best to make me proud', 'Try your best to impress me', 'I hope you try your best', 'I wanna see you at your best', 'Make sure to try your best', 'You better try to impress me', 'I hope you are trying your best to impress me'));
 }
 
-function sendYesOrNoQuestion(question, sender = null) {
+function sendYesOrNoQuestion(question, sender = null, exitIf = null) {
     let previousSender = getCurrentSender();
 
     if (sender !== null) {
@@ -343,19 +343,25 @@ function sendYesOrNoQuestion(question, sender = null) {
 
     if (getCurrentSender() === SENDER_ASSISTANT) {
         sendVirtualAssistantMessage(question, 0);
-        return createYesOrNoQuestion();
+        return createYesOrNoQuestion(exitIf);
     }
 
-    let answer = sendInput(question);
+    let answer = sendInput(question, -1);
+
+    answer.loop(exitIf);
 
     while (true) {
+        if (exitIf && exitIf()) {
+          break;
+        }
+
         if (answer.isLike('yes')) {
             return true;
         } else if (answer.isLike('no')) {
             return false;
         } else {
             sendMessage(YES_OR_NO, 0);
-            answer.loop();
+            answer.loop(exitIf);
         }
     }
 
@@ -383,17 +389,21 @@ function sendYesOrNoQuestionTimeout(question, timeout) {
     }
 }
 
-function createYesOrNoQuestion() {
-    let answer = createInput();
+function createYesOrNoQuestion(exitIf) {
+    let answer = createInput(-1);
+    answer.loop(exitIf);
 
     while (true) {
+        if (exitIf && exitIf()) {
+          break;
+        }
         if (answer.isLike('yes')) {
             return true;
         } else if (answer.isLike('no')) {
             return false;
         } else {
             sendMessageBasedOnSender(YES_OR_NO, 0);
-            answer.loop();
+            answer.loop(exitIf);
         }
     }
 }
