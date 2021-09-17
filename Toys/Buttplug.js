@@ -790,7 +790,7 @@ function setupNewButtplug() {
         }
     }
 
-    if (canUseCamera() && tryTakePhoto("Hold your buttplug in front of the camera and tell me when you are ready.", getButtplugImagePath(name))) {
+    if (canUseCamera() && tryTakePhoto("Hold your buttplug in front of the camera and tell me when you are ready (or just paste an image in).", getButtplugImagePath(name))) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your buttplug named like your buttplug to your Toys/Buttplugs folder.', false);
