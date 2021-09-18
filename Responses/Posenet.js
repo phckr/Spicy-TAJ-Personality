@@ -4,6 +4,7 @@ setResponseIgnoreDisabled(true);
 let posenet_result = null;
 let posenet_image_requests = {};
 let posenet_video_requests = {};
+let posenetMotionDetected = null;
 
 function posenetResponse(message) {
   const result = JSON.parse(message.substring(17));
@@ -20,6 +21,7 @@ function posenetResponse(message) {
     result.when = Date.now();
     posenet_result = result;
     sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
+    setTimeout(function() { if (posenetMotionDetected) { posenetMotionDetected(result.position.motion);}}, 0);
     setTimeout(function () {
       sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
       positionMonitor.update(result);
@@ -48,6 +50,16 @@ function posenetResponse(message) {
       }
     }
   }
+}
+
+
+function setPhotoMotionDetect(detected) {
+  posenetMotionDetected = detected;
+  if (!detected) {
+    sendWebControlJson(JSON.stringify({motion:false}));
+    return;
+  }
+  sendWebControlJson(JSON.stringify({motion:true}));
 }
 
 function getSubRandomFilename(prefix) {
@@ -90,6 +102,11 @@ function tryTakeVideo(prompt, pathname, duration) {
   }
 }
 
+function addRandomSuffix(pathname) {
+  var name = Math.random().toString(36);
+  return pathname + name;
+}
+
 function tryTakePhoto(prompt, pathname) {
   var flag = { complete: false };
   sendWebControlJson(JSON.stringify({largeCamera:true}));
@@ -99,7 +116,21 @@ function tryTakePhoto(prompt, pathname) {
     flag.complete = true;
   });
 
-  if (sendYesOrNoQuestion(prompt, null, function() { return flag.complete; })) {
+  var res;
+  if (typeof prompt == "string") {
+    res = sendYesOrNoQuestion(prompt, null, function() { return flag.complete; });
+  } else {
+    // we wait for the function to return true
+
+    while (!flag.complete) {
+      if (prompt()) {
+        res = 1;
+        break;
+      }
+      wait(0.2);
+    }
+  }
+  if (res) {
     playSound("Audio/Spicy/SpecialSounds/CameraShutter.mp3");
     takeSubPhoto(function (data) {
       writeSubPhotoToFile(data, pathname);
@@ -189,6 +220,11 @@ function getSubPosition() {
       return result.position;
     }
     return null;
+}
+
+function getSubPresent() {
+  const pos = getSubPosition();
+  return pos && pos.present;
 }
 
 function getPosenetResult() {

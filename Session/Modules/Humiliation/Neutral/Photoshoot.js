@@ -31,6 +31,8 @@
         sendMessage("%EmoteHappy%");
         sendMessage(random("Before we begin", "Before we start"));
 
+        var doVideo = false;
+
         switch (randomInteger(0, 2)) {
             case 0:
                 sendMessage(random("I want you to refresh your memory about the catwalk", "You need to refresh what you know about the catwalk"));
@@ -39,12 +41,25 @@
                 sleep(randomInteger(120, 180));
 
                 sendMessage(random("Now", "Well") + "%SlaveName%");
-                sendMessage(random("It's time for you to set up a recording device!", "You need to set up your recording device now"));
+		if (canUseCamera()) {
+                  sendMessage(random("It's time for you to aim your device camera!", "You need to set up your device camera now"));
+	        } else {
+                  sendMessage(random("It's time for you to set up a recording device!", "You need to set up your recording device now"));
+		}
                 sendMessage(random("You're going to do the catwalk for me!", "You will do a lovely catwalk!"));
-                sendMessage(random("I want you to walk back and fourth 10 times", "You are to do the catwalk 15 times"));
+	        if (canUseCamera()) {
+                  sendMessage(random("I want you to walk back and forth until I ring my bell", "You are to do the catwalk until I ring my bell"));
+                } else {
+                  sendMessage(random("I want you to walk back and forth 10 times", "You are to do the catwalk 15 times"));
+                }
                 sendMessage(random("Shake those hips", "Move your hips", "Make that ass look good", "Work those legs"));
                 sendMessage(random("Put on music as well!", "Put on a song as well!") + " %Grin%");
-                sendMessage("When you're done, transfer the video to your humiliation folder");
+		if (canUseCamera()) {
+                  sendMessage("At the end, I'll save the video into your humiliation folder");
+	        } else {
+                  sendMessage("When you're done, transfer the video to your humiliation folder");
+                }
+                doVideo = true;
                 sendMessage("Who knows");
                 sendMessage(random("Maybe ", "Perhaps ") + getVar('blackmailName1') + random(' would like to see it as well?', ' wouldn\'t mind seeing them as well', ' would enjoy watching them!') + ' %Lol%');
                 break;
@@ -52,13 +67,26 @@
                 sendMessage(random("I want you to", "You need to") + " find, think of, imagine as best as you can - different poses");
                 sendMessage(random("Poses you can use while lying on your bed", "Poses for to take while shooting different images") + " %Grin%");
                 sendMessage(random("It's really quite simple", "It's rather simple", "It's not complicated"));
-                sendMessage(random("I want you to snap a few image", "You're going to snap some pictures"));
+                if (canUseCamera()) {
+		  sendMessage(random("I will snap a few image", "I'm going to snap some pictures"));
+                } else {
+		  sendMessage(random("I want you to snap a few image", "You're going to snap some pictures"));
+                }
                 sendMessage(random("In different lovely poses", "While taking some really good poses"));
                 sendMessage(random("On your bed", "And posing them on your bed"));
-                sendMessage("When you're done, I want you to transfer those images to your self humiliation folder");
+                if (canUseCamera()) {
+                  sendMessage("When you're done, I'm going to transfer those images to your self humiliation folder");
+                } else {
+		  sendMessage("When you're done, I want you to transfer those images to your self humiliation folder");
+                }
                 sendMessage(random("We're going to have a blast with them!", "We should be able to put them to good use!"));
-                sendMessage(random("Snap at least 10", "Take at least 15 pictures"));
-                sendMessage(random("But feel free to do many many more!", "But don't shy away from taking a lot more!") + " %Lol%");
+                if (canUseCamera()) {
+                  sendMessage(random("Snap at least 10", "Take at least 15 pictures"));
+                  sendMessage(random("But feel free to do many many more!", "But don't shy away from taking a lot more!") + " %Lol%");
+                } else {
+                  sendMessage(random("I'm going to take pictures for as long as I like.", "I love taking pictures of my slave."));
+                  sendMessage(random("I haven't decided yet how many.", "I'm feeling like taking a lot of pictures today."));
+                }
                 break;
             case 2:
                 sendMessage(random("You need to choose ") + randomInteger(3, 7) + " positions");
@@ -70,9 +98,27 @@
         }
 
         sendMessage("Now %SlaveName%");
-        sendMessage("Get to work!");
-        sendMessage("Tell me when you are done");
-        waitForDone(999999);
+        if (canUseCamera()) {
+          if (doVideo) {
+            tryTakeVideo("Tell me when to start recording.", addRandomSuffix("Videos/Spicy/SelfHumiliation/photoshoot_"), randomInteger(120, 180));
+            playBellSound();
+          } else {
+	    sendMessage(random("I'm going to take pictures when you are nicely posed.", "I'm going to watch you and pick the right time to take the pictures."));
+	    sendMessage(random("So get posing for me", "I want to see you posing for me."));
+            sendMessage(random("I'll ring my bell when we are done.", "When we are done, I'll ring my bell."));
+            for (var i = randomInt(10, 20); i > 0; i--) {
+              var flag = {};
+              setPhotoMotionDetect(function(motion) { flag.motion = motion; }));
+              tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, addRandomSuffix("Images/Spicy/SelfHumiliation/photoshoot_"));
+              setPhotoMotionDetect(null);
+            }
+            playBellSound();
+          }
+        } else {
+	  sendMessage("Get to work!");
+	  sendMessage("Tell me when you are done");
+	  waitForDone(999999);
+        }
 
         sendMessage("%Good%");
         sendMessage("I love watching all these images and movies");
