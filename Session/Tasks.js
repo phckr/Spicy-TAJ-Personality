@@ -75,26 +75,42 @@ function startTimePassTasks(durationMinutes, allowTeasing = true) {
                 break;
             case 2:
                 if (HUMILIATION_LIMIT.isAllowed() || VERBAL_HUMILIATION_LIMIT.isAllowed()) {
-                    sendMessage("I want you to grab your phone or a camera");
-                    sendMessage("And I want you to take some humiliating pictures of yourself right now");
-                    sendMessage("I don't care what you do to make them humiliating");
-
-
-                    if(SISSY_LIMIT.isAllowed() && hasSomeLingerie() && isLingeriePlayAllowed() && isChance(50)) {
-                        sendMessage('But...');
-
-                        if(hasLingerieOn()) {
-                            sendMessage('That you\'re already wearing lingerie makes this even better %SlaveNameSmiley%');
-                        } else {
-                            putOnLingerie();
-                            sendMessage('Lingerie is always great for the purpose of humiliation %SlaveNameSmiley%');
-                        }
+                    if (canUseCamera()) {
+		      sendMessage("I want to take some humiliating pictures of you right now");
                     } else {
-                        sendMessage("But I want them to show you naked");
+		      sendMessage("I want you to grab your phone or a camera");
+		      sendMessage("And I want you to take some humiliating pictures of yourself right now");
                     }
+		    sendMessage("I don't care what you do to make them humiliating");
 
-                    sendMessage("Go ahead and take some now and return when you hear my bell");
-                    sleep(randomInteger(75, 120));
+
+		    if(SISSY_LIMIT.isAllowed() && hasSomeLingerie() && isLingeriePlayAllowed() && isChance(50)) {
+			sendMessage('But...');
+
+			if(hasLingerieOn()) {
+			    sendMessage('That you\'re already wearing lingerie makes this even better %SlaveNameSmiley%');
+			} else {
+			    putOnLingerie();
+			    sendMessage('Lingerie is always great for the purpose of humiliation %SlaveNameSmiley%');
+			}
+		    } else {
+			sendMessage("But I want them to show you naked");
+		    }
+
+	            if (canUseCamera()) {
+		      sendMessage(random("I'm going to take pictures when you are nicely posed.", "I'm going to watch you and pick the right time to take the pictures."));
+		      sendMessage(random("So get posing for me", "I want to see you posing for me."));
+		      for (var i = randomInt(5, 10); i > 0; i--) {
+			var flag = {};
+			setPhotoMotionDetect(function(motion) { flag.motion = motion; }));
+			var pathname = addRandomSuffix("Images/Spicy/SelfHumiliation/humiliating_");
+			tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, pathname);
+			setPhotoMotionDetect(null);
+		      }
+                    } else {
+		      sendMessage("Go ahead and take some now and return when you hear my bell");
+		      sleep(randomInteger(75, 120));
+                    }
                     returnSlave();
 
                     if(hasLingerieOn()) {
@@ -106,9 +122,13 @@ function startTimePassTasks(durationMinutes, allowTeasing = true) {
                         }
                     }
 
-                    sendMessage("I want you to place those pictures inside your self humiliation folder");
-                    sendMessage("But you can do so after the session");
-                    sendMessage("For now I want to continue messing with you %Grin%");
+		    if (canUseCamera()) {
+                      sendMessage("I've got those all nicely saved away.");
+		    } else {
+		      sendMessage("I want you to place those pictures inside your self humiliation folder");
+		      sendMessage("But you can do so after the session");
+		      sendMessage("For now I want to continue messing with you %Grin%");
+                    }
                     break;
                 }
 
@@ -438,5 +458,6 @@ function goToCorner(durationSeconds) {
 function returnSlave() {
     sendMessage(randomInteger("Return here", "Come back", "Get here", "Return", "Get back here", "Get back to me", "Get your %Ass% over here") + " %SlaveName%", 0);
     playBellSound();
+    returnSlave.complete = true;
     sleep(5);
 }

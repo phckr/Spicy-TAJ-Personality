@@ -79,6 +79,8 @@ function takeSubVideoAndSaveInFolder(folder, prefix, duration) {
   }, duration);
 }
 
+// Note that duration can be a function that returns truthy to continue
+// and falsy to stop
 function tryTakeVideo(prompt, pathname, duration) {
   sendWebControlJson(JSON.stringify({largeCamera:true}));
   if (sendYesOrNoQuestion(prompt)) {
@@ -90,9 +92,16 @@ function tryTakeVideo(prompt, pathname, duration) {
         flag.complete = true;
       }
     }, duration);
-    var start = Date.now();
-    while (start + 60 * 1000 > Date.now() && !flag.complete) {
-      wait(0.2);
+    if (typeof duration == "function") {
+      while (duration() && !flag.complete) {
+	wait(0.2);
+      }
+      sendWebControlJson(JSON.stringify({video:null}));
+    } else {
+      var start = Date.now() + duration;
+      while (start + 60 * 1000 > Date.now() && !flag.complete) {
+	wait(0.2);
+      }
     }
     sendWebControlJson(JSON.stringify({largeCamera:false}));
     return flag.complete;
@@ -200,7 +209,11 @@ function handlePasteSubPhoto(done) {
 function takeSubVideo(done, duration) {
   var name = Math.random().toString(36);
   posenet_video_requests[name] = done;
-  sendWebControlJson(JSON.stringify({video:name, duration:duration}));
+  var command = {video:name};
+  if (typeof duration == "function") {
+    command.duration = duration;
+  }
+  sendWebControlJson(JSON.stringify(command));
 }
 
 function canUseCamera() {

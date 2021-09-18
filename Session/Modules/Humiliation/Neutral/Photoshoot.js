@@ -109,7 +109,8 @@
             for (var i = randomInt(10, 20); i > 0; i--) {
               var flag = {};
               setPhotoMotionDetect(function(motion) { flag.motion = motion; }));
-              tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, addRandomSuffix("Images/Spicy/SelfHumiliation/photoshoot_"));
+              var pathname = addRandomSuffix("Images/Spicy/SelfHumiliation/photoshoot_");
+              tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, pathname);
               setPhotoMotionDetect(null);
             }
             playBellSound();

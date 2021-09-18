@@ -58,7 +58,7 @@
                 sendCensorInstructions(10);
                 sendMessage('Feel free to bump those numbers up. They are just a minimum %Grin%');
                 sendMessage('If it\'s just feet feel free to use them without any censoring. But add some nice captions');
-                sendMessage('After you are done place the min the appropriate category folders for my and your entertainment  %Grin%');
+                sendMessage('After you are done place them in the appropriate category folders for my and your entertainment  %Grin%');
                 sendMessage('Feel free to share them on reddit as well');
                 sendMessage('That\'s all for today %EmoteHappy%');
                 sendMessage('Make sure to start with the first images today %SlaveName% %Wicked%');

@@ -1098,30 +1098,37 @@ function complicatedPositionTrainingSelection(totalPositions) {
             sendMessage("Of course I want you in the Slut position");
             lockImages();
             showImage("Images/Spicy/Positions/Slut2.jpg");
-            sendMessage("If you really want to please me then you should film yourself");
-            sendMessage("I think it would fit perfectly inside your self humiliation videos folder %Grin%");
-            unlockImages();
+            if (canUseCamera()) {
+              sendMessage("I'm going to film this for you.");
+              sendMessage("Make sure to aim your webcam so that I can see you in the Slut position.");
+              returnSlave.complete = false;
+              tryTakeVideo("Is it ready?", addRandomSuffix("Videos/Spicy/SelfHumiliation/slutposition_"), function () { return !returnSlave.complete;});
+            } else {
+	      sendMessage("If you really want to please me then you should film yourself");
+	      sendMessage("I think it would fit perfectly inside your self humiliation videos folder %Grin%");
+	      unlockImages();
 
-            while (true) {
-                let answer = sendInput("Will you be a doll and film yourself?");
-                if (answer.containsIgnoreCase("yes")) {
-                    sendMessage("Fantastic");
-                    changeMeritLow(false);
-                    sendMessage("Get your camera ready then..");
-                    sleep(40);
-                    break;
-                } else if (answer.containsIgnoreCase("no")) {
-                    sendMessage("Aww %EmoteSad%");
-                    break;
-                } else {
-                    sendMessage("Are you going to film yourself or not %SlaveName%?", 0);
-                    changeMeritLow(true);
-                    answer.loop();
-                }
+	      while (true) {
+		  let answer = sendInput("Will you be a doll and film yourself?");
+		  if (answer.containsIgnoreCase("yes")) {
+		      sendMessage("Fantastic");
+		      changeMeritLow(false);
+		      sendMessage("Get your camera ready then..");
+		      sleep(40);
+		      break;
+		  } else if (answer.containsIgnoreCase("no")) {
+		      sendMessage("Aww %EmoteSad%");
+		      break;
+		  } else {
+		      sendMessage("Are you going to film yourself or not %SlaveName%?", 0);
+		      changeMeritLow(true);
+		      answer.loop();
+		  }
+	      }
+
+	      lockImages();
+	      showImage("Images/Spicy/Positions/Slut2.jpg");
             }
-
-            lockImages();
-            showImage("Images/Spicy/Positions/Slut2.jpg");
             sendMessage("Get into position %SlaveName%");
             sendMessage("Stay there until you hear my bell");
             //TOADD: No More ((If you absolutely can't handle anymore just say 'stop'))
