@@ -102,7 +102,7 @@ function startTimePassTasks(durationMinutes, allowTeasing = true) {
 		      sendMessage(random("So get posing for me", "I want to see you posing for me."));
 		      for (var i = randomInt(5, 10); i > 0; i--) {
 			var flag = {};
-			setPhotoMotionDetect(function(motion) { flag.motion = motion; }));
+			setPhotoMotionDetect(function(motion) { flag.motion = motion; });
 			var pathname = addRandomSuffix("Images/Spicy/SelfHumiliation/humiliating_");
 			tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, pathname);
 			setPhotoMotionDetect(null);

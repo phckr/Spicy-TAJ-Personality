@@ -279,7 +279,7 @@ if (!isVar("SpankzChoirSubscription")) {
             AuctionStroke = sendInput(" How many strokes do you wish to put up for auction? ");
             while (true) {
                 if (AuctionStroke.isInteger()) {
-                    result = AuctionStroke.getInt();
+                    var result = AuctionStroke.getInt();
                     if ((result <= 99) || (result >= 1201)) {
                         sendDungeonMessage(" You didn't provide me with a valid number, choose between 100 and 1200 ");
                         AuctionStroke.loop();
