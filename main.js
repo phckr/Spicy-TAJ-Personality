@@ -58,6 +58,7 @@ run("Utils/TAJUtils.js");
 run("Utils/TimeUtils.js");
 run("Utils/LegacyUtils.js");
 run("Utils/MediaUtils.js");
+run("Utils/HtmlUtils.js");
 
 run("Session/History.js");
 

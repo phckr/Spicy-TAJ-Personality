@@ -1002,7 +1002,35 @@ function askForNewToyName(toyMultiple) {
     return name;
 }
 
+function createToyListGUIHtml(onClick, name, list) {
+  var gui = createElement('table', {class: 'dialog'});
+  var header = createElement("tr");
+  var label = createElement("th");
+  label.append(name);
+  header.append(label);
+  gui.append(header);
+
+  for (var i = 0; i < list.length; i++) {
+    var row = createElement("tr");
+    var data = createElement('td', {class: 'linklike', onclick: "sendClick('.dialog', this)"});
+    row.append(data);
+    gui.append(row);
+
+    data.append(list[i]);
+  }
+
+  var style = createElement("style");
+  style.append(".dialog { }\n");
+  gui.append(style);
+
+  gui.render();
+}
+
 function createToyListGUI(onClick, name, list) {
+    if (isBrowserConnected() || 1) {
+	createToyListGUIHtml(onClick, name, list);
+	return;
+    }
     const instance = Java.type('me.goddragon.teaseai.TeaseAI').application;
     const controller = instance.getController();
 

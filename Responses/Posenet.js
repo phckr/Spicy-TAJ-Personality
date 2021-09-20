@@ -5,9 +5,12 @@ let posenet_result = null;
 let posenet_image_requests = {};
 let posenet_video_requests = {};
 let posenetMotionDetected = null;
+let posenet_last_message = null;
 
 function posenetResponse(message) {
     var result = JSON.parse(message.substring(17));
+    result.when = Date.now();
+    posenet_last_message = result;
     if (result.command) {
         sendDebugMessage("Command: " + JSON.stringify(result));
         if (result.command == "vocab") {
@@ -19,7 +22,6 @@ function posenetResponse(message) {
     if (result.position) {
         sendDebugMessage("Posenet: " + JSON.stringify(result.position));
         const previous = posenet_result;
-        result.when = Date.now();
         posenet_result = result;
         sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
         setTimeout(function () { if (posenetMotionDetected) { posenetMotionDetected(result.position.motion); } }, 0);
@@ -227,6 +229,13 @@ function getRecentPosenetResult() {
         return posenet_result;
     }
     return null;
+}
+
+function isBrowserConnected() {
+    if (posenet_last_message && Date.now() - posenet_last_message.when < 15000) {
+        return true;
+    }
+    return false;
 }
 
 function getSubPosition() {
