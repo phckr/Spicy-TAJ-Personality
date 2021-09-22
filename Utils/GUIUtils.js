@@ -43,6 +43,8 @@ function createDialog(name) {
     return {
         dialog: new javafx.stage.Stage(),
 
+        name: name,
+
         readyUp: function(pane) {
             let instance = Java.type('me.goddragon.teaseai.TeaseAI').application;
             let controller = instance.getController();

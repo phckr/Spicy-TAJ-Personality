@@ -1236,74 +1236,199 @@ function openChastityCageList() {
     }, "Chastity Cages", list)
 }
 
+function showChastityCageGUIHtml(chastityCage) {
+  var gui = createElement('table', {class: 'dialogchastitycage'});
+  var header = createElement("tr");
+  var label = createElement("th");
+  label.append(chastityCage.name);
+  header.append(label);
+  gui.append(header);
+
+  let row = createToySettingGUIHtml(gui, chastityCage.getImagePath());
+  gui.render();
+}
+
 function showChastityCageGUI(chastityCage) {
+    const createDialogFn = function () {
+        const dialog = createDialog(chastityCage.name);
+
+        let gridPane = createGridPaneGUI();
+
+        let row = createToySettingGUI(gridPane, chastityCage.getImagePath());
+
+        let writebackGui = createWritebackGUI(chastityCage);
+
+        let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", chastityCage.name), "name");
+
+        let length = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Length", chastityCage.length), "length");
+        length.setOnlyDoubles();
+
+        let material = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Material"), "material");
+        material.addChildren(MATERIAL, chastityCage.material);
+
+        /*let vibrating = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Vibrating"), "vibrating");
+        vibrating.setSelected(dildo.vibrating);*/
+
+        let dialator = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Dialator"), "dialator");
+        dialator.setSelected(chastityCage.dialator);
+
+        let dialatorDetachable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Dialator detachable"), "dialatorDetachable");
+        dialatorDetachable.setSelected(chastityCage.dialatorDetachable);
+
+        let spikes = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes"), "spikes");
+        spikes.setSelected(chastityCage.spikes);
+
+        let spikesDetachable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes Detachable"), "spikesDetachable");
+        spikesDetachable.setSelected(chastityCage.spikesDetachable);
+
+        let spikesOverall = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes Overall"), "spikesOverall");
+        spikesOverall.setSelected(chastityCage.spikesOverall);
+
+        let spikesVariable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes variable"), "spikesVariable");
+        spikesVariable.setSelected(chastityCage.spikesVariable);
+
+        let spikesVariableAmount = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Spikes variable amount"), "spikesVariableAmount");
+        spikesVariableAmount.setOnlyIntegers();
+
+        let penisAccessible = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Penis Accessible"), "penisAccessible");
+        penisAccessible.setSelected(chastityCage.penisAccessible);
+
+        let ballTrapType = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Ball Trap Type"), "ballTrapType");
+        ballTrapType.addChildren(BALL_TRAP_TYPE, chastityCage.ballTrapType);
+
+        let estim = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Estim"), "estim");
+        estim.setSelected(chastityCage.estim);
+
+
+        let save = createButton("Save");
+        gridPane.setConstraints(save.button, 1, row);
+        gridPane.getChildren().add(save.button);
+
+        save.setOnAction(function (handle) {
+            writebackGui.writeBack();
+            saveChastityCages();
+            dialog.close();
+        });
+
+        gridPane.addCloseButton(dialog, 2, row++);
+
+        dialog.gridPane = gridPane;
+
+        return dialog;
+    };
+
     const RunnableClass = Java.type('java.lang.Runnable');
     let CustomRunnable = Java.extend(RunnableClass, {
         run: function () {
-            const dialog = createDialog(chastityCage.name);
-
-            let gridPane = createGridPaneGUI();
-
-            let row = createToySettingGUI(gridPane, chastityCage.getImagePath());
-
-            let writebackGui = createWritebackGUI(chastityCage);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", chastityCage.name), "name");
-
-            let length = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Length", chastityCage.length), "length");
-            length.setOnlyDoubles();
-
-            let material = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Material"), "material");
-            material.addChildren(MATERIAL, chastityCage.material);
-
-            /*let vibrating = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Vibrating"), "vibrating");
-            vibrating.setSelected(dildo.vibrating);*/
-
-            let dialator = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Dialator"), "dialator");
-            dialator.setSelected(chastityCage.dialator);
-
-            let dialatorDetachable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Dialator detachable"), "dialatorDetachable");
-            dialatorDetachable.setSelected(chastityCage.dialatorDetachable);
-
-            let spikes = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes"), "spikes");
-            spikes.setSelected(chastityCage.spikes);
-
-            let spikesDetachable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes Detachable"), "spikesDetachable");
-            spikesDetachable.setSelected(chastityCage.spikesDetachable);
-
-            let spikesOverall = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes Overall"), "spikesOverall");
-            spikesOverall.setSelected(chastityCage.spikesOverall);
-
-            let spikesVariable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes variable"), "spikesVariable");
-            spikesVariable.setSelected(chastityCage.spikesVariable);
-
-            let spikesVariableAmount = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Spikes variable amount"), "spikesVariableAmount");
-            spikesVariableAmount.setOnlyIntegers();
-
-            let penisAccessible = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Penis Accessible"), "penisAccessible");
-            penisAccessible.setSelected(chastityCage.penisAccessible);
-
-            let ballTrapType = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Ball Trap Type"), "ballTrapType");
-            ballTrapType.addChildren(BALL_TRAP_TYPE, chastityCage.ballTrapType);
-
-            let estim = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Estim"), "estim");
-            estim.setSelected(chastityCage.estim);
-
-
-            let save = createButton("Save");
-            gridPane.setConstraints(save.button, 1, row);
-            gridPane.getChildren().add(save.button);
-
-            save.setOnAction(function (handle) {
-                writebackGui.writeBack();
-                saveChastityCages();
-                dialog.close();
-            });
-
-            gridPane.addCloseButton(dialog, 2, row++);
-
-            dialog.readyAndShow(gridPane.gridPane);
+            if (isBrowserConnected()) {
+                var dialog = createDialogFn();
+                dialog.readyUp(dialog.gridPane.gridPane);
+                showDialogAsHtml(dialog);
+                return;
+            }
+        
+            var dialog = createDialogFn();
+            dialog.readyAndShow(dialog.gridPane.gridPane);
         }
     });
     runGui(new CustomRunnable());
+}
+
+function showDialogAsHtml(dialog) {
+  var gui = createElement('table', {class: 'dialogchastitycage'});
+  var header = createElement("tr");
+  var label = createElement("th");
+  label.append(dialog.name);
+  header.append(label);
+  gui.append(header);
+
+  let scene = dialog.dialog.getScene();
+  let pane = scene.getRoot();   // We know this is a javafx GridPane object
+
+  var tr = createElement('tr');
+  var currentRow = 0;
+  var currentCol = 0;
+
+  sendDebugMessage("pane = " + typeof pane + ": " + pane.getClass() + ": " + pane);
+  const GridPane = pane.class.static;
+
+  let children = pane.getChildren();
+
+  for (var childIndex in pane.getChildren()) {
+    let child = children[childIndex];
+    sendDebugMessage("child = " + typeof child + ": " + child.getClass() + ": " + child);
+    var row = GridPane.getRowIndex(child);
+    var col = GridPane.getColumnIndex(child);
+    sendDebugMessage("Got row,col = " + row + "," + col);
+
+    if (row > currentRow) {
+        gui.append(tr);
+        tr = createElement('tr');
+        currentRow += 1;
+        currentCol = 0;
+    }
+    while (col > currentCol) {
+        tr.append(createElement('td'));
+        currentCol += 1;
+    }
+    let td = createElement('td');
+    // Now figure out how to map `child` into HTML
+    let childClass = "" + child.getClass();
+    if (childClass.endsWith(".Text")) {
+        let text = child.getText();
+        if (text.endsWith(":")) {
+            text = text.slice(0, -1);
+        }
+        td.text(text);
+    }
+
+    if (childClass.endsWith(".TextField")) {
+        let text = child.getText();
+        if (!text) {
+            text = "";
+        }
+        let input = createElement('input', {value: text, type: 'text'});
+        td.append(input);
+    }
+
+    if (childClass.endsWith(".CheckBox")) {
+        var attrs = {type: 'checkbox'};
+        if (child.isSelected()) {
+            attrs.checked = true;
+        }
+        let input = createElement('input', attrs);
+        td.append(input);
+    }
+
+    if (childClass.endsWith(".Button")) {
+        let button = createElement('button', {type: 'button'});
+        button.text(child.getText());
+        td.append(button);
+    }
+
+    if (childClass.endsWith(".ComboBox")) {
+        let items = child.getItems();
+        let selectedItem = child.getValue();
+        let select = createElement('select');
+        for (var itemIndex in items) {
+            let item = items[itemIndex];
+            var attrs = {value: item};
+            if (item == selectedItem) {
+                attrs.selected = true;
+            }
+            var option = createElement('option', attrs);
+            option.text(item);
+            select.append(option);
+        }
+        td.append(select);
+    }
+
+    tr.append(td);
+    currentCol += 1;
+  }
+  gui.append(tr);
+
+  sendDebugMessage("About to render: " + gui.serialize());
+
+  gui.render();
 }

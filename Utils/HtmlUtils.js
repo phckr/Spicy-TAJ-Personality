@@ -72,3 +72,7 @@ function createElement(element, attrs) {
   result.children = [];
   return result;
 }
+
+function createTextElement(text) {
+    return escapeHtml(text);
+}

@@ -6,6 +6,7 @@ let posenet_image_requests = {};
 let posenet_video_requests = {};
 let posenetMotionDetected = null;
 let posenet_last_message = null;
+let posenetOnClick = {};
 
 function posenetResponse(message) {
     var result = JSON.parse(message.substring(17));
@@ -54,6 +55,13 @@ function posenetResponse(message) {
                 posenet_video_requests[vids[i].name](vids[i].value);
             }
         }
+    }
+
+    if (result.click) {
+      var handler = posenetOnClick[result.dialog];
+      if (handler) {
+	handler(result.click, result.args);
+      }
     }
 }
 
@@ -120,9 +128,13 @@ function addRandomSuffix(pathname) {
     return pathname + name;
 }
 
-function tryTakePhoto(prompt, pathname) {
+function tryTakePhoto(prompt, pathname, options) {
     var flag = { complete: false };
-    sendWebControlJson(JSON.stringify({ largeCamera: true }));
+    var command = { largeCamera: true };
+    if (options) {
+      comand.maskPercent = options.maskPercent;
+    }
+    sendWebControlJson(JSON.stringify(command));
 
     handlePasteSubPhoto(function (data) {
         writeSubPhotoToFile(data, pathname);
@@ -361,6 +373,10 @@ function setTimeout(callback, delay) {
 function cancelTimeout(runnable) {
     const RunnableHandlerClass = Java.type('me.goddragon.teaseai.api.runnable.TeaseRunnableHandler');
     RunnableHandlerClass.getHandler().remove(runnable);
+}
+
+function registerOnClick(selector, callback) {
+  posenetOnClick[selector] = callback;
 }
 
 var positionMonitor = new PositionMonitor();

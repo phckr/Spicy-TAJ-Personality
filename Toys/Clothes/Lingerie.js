@@ -26,7 +26,7 @@ function hasOutfitOn() {
         SKIRT_TOY.getCurrentToys().length + STOCKING_TOY.getCurrentToys().length + TOP_TOY.getCurrentToys().length + TROUSER_TOY.getCurrentToys().length;
 
     sendDebugMessage('Outfit pieces on right now: ' + stuffOnCount);
-    return stuffOnCount < 0;
+    return stuffOnCount > 0;
 }
 
 function checkClearOutfitOn() {

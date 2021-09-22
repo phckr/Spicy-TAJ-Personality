@@ -1003,7 +1003,7 @@ function askForNewToyName(toyMultiple) {
 }
 
 function createToyListGUIHtml(onClick, name, list) {
-  var gui = createElement('table', {class: 'dialog'});
+  var gui = createElement('table', {class: 'dialogtoylist'});
   var header = createElement("tr");
   var label = createElement("th");
   label.append(name);
@@ -1012,7 +1012,7 @@ function createToyListGUIHtml(onClick, name, list) {
 
   for (var i = 0; i < list.length; i++) {
     var row = createElement("tr");
-    var data = createElement('td', {class: 'linklike', onclick: "sendClick('.dialog', this)"});
+    var data = createElement('td', {class: 'linklike', onclick: "sendClick('.dialogtoylist', this)"});
     row.append(data);
     gui.append(row);
 
@@ -1020,16 +1020,21 @@ function createToyListGUIHtml(onClick, name, list) {
   }
 
   var style = createElement("style");
-  style.append(".dialog { }\n");
+  style.append(".dialogtoylist { }\n");
   gui.append(style);
+
+  registerOnClick('.dialogtoylist', function (item, content) {
+    sendDebugMessage("Got click on " + item + " with contents " + JSON.stringify(content));
+    onClick({ listView: { getSelectionModel: function() { return { getSelectedItem: function() { return item;} }}}});
+  });
 
   gui.render();
 }
 
 function createToyListGUI(onClick, name, list) {
-    if (isBrowserConnected() || 1) {
-	createToyListGUIHtml(onClick, name, list);
-	return;
+    if (isBrowserConnected()) {
+        createToyListGUIHtml(onClick, name, list);
+        return;
     }
     const instance = Java.type('me.goddragon.teaseai.TeaseAI').application;
     const controller = instance.getController();
@@ -1063,6 +1068,17 @@ function createToyListGUI(onClick, name, list) {
         }
     });
     runGui(new CustomRunnable());
+}
+
+function createToySettingGUIHtml(table, imagePath) {
+    var image = createElement('img', { src: allocateTempUrl(imagePath)});
+    var td = createElement('td');
+    var tr = createElement('tr');
+    td.append(image);
+    tr.append(td);
+    table.append(tr);
+
+    
 }
 
 function createToySettingGUI(gridPane, imagePath) {

@@ -20,7 +20,7 @@ function lockAwayChastityKey() {
             for (var i = 0; i < filesArray.length; i++) {
                 filesArray[i].delete();
             }
-            tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination");
+            tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination", { maskPercent: 30});
             sendVirtualAssistantMessage('%Good%');
         } else {
             sendVirtualAssistantMessage('Then you will take the picture and place it inside the "Images/Spicy/Chastity/ChastityCombination" folder and make sure there is only one file inside that folder');
