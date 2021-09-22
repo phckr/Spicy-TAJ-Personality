@@ -58,10 +58,10 @@ function posenetResponse(message) {
     }
 
     if (result.click) {
-      var handler = posenetOnClick[result.dialog];
-      if (handler) {
-	handler(result.click, result.args);
-      }
+        var handler = posenetOnClick[result.dialog];
+        if (handler) {
+            handler(result.click, result.args);
+        }
     }
 }
 
@@ -132,7 +132,7 @@ function tryTakePhoto(prompt, pathname, options) {
     var flag = { complete: false };
     var command = { largeCamera: true };
     if (options) {
-      comand.maskPercent = options.maskPercent;
+        comand.maskPercent = options.maskPercent;
     }
     sendWebControlJson(JSON.stringify(command));
 
@@ -376,7 +376,7 @@ function cancelTimeout(runnable) {
 }
 
 function registerOnClick(selector, callback) {
-  posenetOnClick[selector] = callback;
+    posenetOnClick[selector] = callback;
 }
 
 var positionMonitor = new PositionMonitor();

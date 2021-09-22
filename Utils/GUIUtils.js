@@ -5,8 +5,23 @@ function createWritebackGUI(object) {
 
         addWritebackValue: function (element, attributeName) {
             this.attributeMap.set(attributeName, element);
-
             return element;
+        },
+
+        getAttributeNameForControl: function (control) {
+            let result = null;
+            this.attributeMap.forEach(function(controlObject, attributeName) {
+                for (var prop in controlObject) {
+                    if (controlObject[prop] == control) {
+                        result = attributeName;
+                    }
+                }
+            });
+            return result;
+        },
+
+        getTAJControlForName: function (attributeName) {
+            return this.attributeMap.get(attributeName);
         },
 
         writeBack: function () {
@@ -268,6 +283,10 @@ function createComboBox() {
             }
 
             this.childrenParent = object;
+        },
+
+        getWriteBackValueForValue: function (value) {
+            return this.childrenParent[value];
         },
 
         getWriteBackValue: function () {

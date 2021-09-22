@@ -1287,7 +1287,7 @@ function showChastityCageGUI(chastityCage) {
         let spikesVariable = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Spikes variable"), "spikesVariable");
         spikesVariable.setSelected(chastityCage.spikesVariable);
 
-        let spikesVariableAmount = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Spikes variable amount"), "spikesVariableAmount");
+        let spikesVariableAmount = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Spikes variable amount", chastityCage.spikesVariableAmount), "spikesVariableAmount");
         spikesVariableAmount.setOnlyIntegers();
 
         let penisAccessible = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Penis Accessible"), "penisAccessible");
@@ -1313,6 +1313,7 @@ function showChastityCageGUI(chastityCage) {
         gridPane.addCloseButton(dialog, 2, row++);
 
         dialog.gridPane = gridPane;
+        dialog.writebackGui = writebackGui;
 
         return dialog;
     };
@@ -1353,6 +1354,7 @@ function showDialogAsHtml(dialog) {
   const GridPane = pane.class.static;
 
   let children = pane.getChildren();
+  let writebackGui = dialog.writebackGui;
 
   for (var childIndex in pane.getChildren()) {
     let child = children[childIndex];
@@ -1382,17 +1384,19 @@ function showDialogAsHtml(dialog) {
         td.text(text);
     }
 
+    let name = writebackGui.getAttributeNameForControl(child) || "";
+
     if (childClass.endsWith(".TextField")) {
         let text = child.getText();
         if (!text) {
             text = "";
         }
-        let input = createElement('input', {value: text, type: 'text'});
+        let input = createElement('input', {name: name, value: text, type: 'text'});
         td.append(input);
     }
 
     if (childClass.endsWith(".CheckBox")) {
-        var attrs = {type: 'checkbox'};
+        var attrs = {type: 'checkbox', name: name};
         if (child.isSelected()) {
             attrs.checked = true;
         }
@@ -1401,15 +1405,17 @@ function showDialogAsHtml(dialog) {
     }
 
     if (childClass.endsWith(".Button")) {
-        let button = createElement('button', {type: 'button'});
-        button.text(child.getText());
-        td.append(button);
+        if (child.getText() != "Close") {
+            let button = createElement('button', {type: 'button', name: name, onclick: 'sendClick(".' + gui.attrs.class + '", this, true)'});
+            button.text(child.getText());
+            td.append(button);
+        }
     }
 
     if (childClass.endsWith(".ComboBox")) {
         let items = child.getItems();
         let selectedItem = child.getValue();
-        let select = createElement('select');
+        let select = createElement('select', {name: name});
         for (var itemIndex in items) {
             let item = items[itemIndex];
             var attrs = {value: item};
@@ -1429,6 +1435,22 @@ function showDialogAsHtml(dialog) {
   gui.append(tr);
 
   sendDebugMessage("About to render: " + gui.serialize());
+
+  registerOnClick('.' + gui.attrs.class, function (click, result) {
+    for (var name in result) {
+          if (name) {
+              var value = result[name];
+              let control = writebackGui.getTAJControlForName(name);
+              if (control) {
+                  if (control.getWriteBackValueForValue) {
+                      value = control.getWriteBackValueForValue(value);
+                  }
+              }
+              writebackGui.object[name] = isNaN(value) ? value : +value;
+          }
+      }
+      saveChastityCages();
+  });
 
   gui.render();
 }
