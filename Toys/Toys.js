@@ -641,7 +641,7 @@ function createMultipleToy(name, variableName = undefined) {
             return null;
         },
 
-        openListGui: function () {
+        openListGui: function (name) {
             let list = javafx.collections.FXCollections.observableArrayList();
 
             for (let x = 0; x < this.toyInstances.length; x++) {
@@ -655,7 +655,7 @@ function createMultipleToy(name, variableName = undefined) {
                 if (selectedItem != null) {
                     toyInstance.showEditGui(toyInstance.getByName(selectedItem));
                 }
-            }, "High Heels", list)
+            }, name, list)
         },
 
         hasToy: function () {
@@ -1003,7 +1003,8 @@ function askForNewToyName(toyMultiple) {
 }
 
 function createToyListGUIHtml(onClick, name, list) {
-  var gui = createElement('table', {class: 'dialogtoylist'});
+  var id = name.replace(/\s+/g, "").toLowerCase();
+  var gui = createElement('table', {class: 'dialogtoylist' + id});
   var header = createElement("tr");
   var label = createElement("th");
   label.append(name);
@@ -1012,7 +1013,7 @@ function createToyListGUIHtml(onClick, name, list) {
 
   for (var i = 0; i < list.length; i++) {
     var row = createElement("tr");
-    var data = createElement('td', {class: 'linklike', onclick: "sendClick('.dialogtoylist', this)"});
+    var data = createElement('td', {class: 'linklike', onclick: "sendClick('.dialogtoylist" + id + "', this)"});
     row.append(data);
     gui.append(row);
 
@@ -1020,10 +1021,10 @@ function createToyListGUIHtml(onClick, name, list) {
   }
 
   var style = createElement("style");
-  style.append(".dialogtoylist { }\n");
+  style.append(".dialogtoylist" + id + " { }\n");
   gui.append(style);
 
-  registerOnClick('.dialogtoylist', function (item, content) {
+  registerOnClick('.dialogtoylist' + id, function (item, content) {
     sendDebugMessage("Got click on " + item + " with contents " + JSON.stringify(content));
     onClick({ listView: { getSelectionModel: function() { return { getSelectedItem: function() { return item;} }}}});
   });
@@ -1077,8 +1078,21 @@ function createToySettingGUIHtml(table, imagePath) {
     td.append(image);
     tr.append(td);
     table.append(tr);
+}
 
-    
+function openToyList(type, shower, name) {
+    let list = javafx.collections.FXCollections.observableArrayList();
+
+    for (let x = 0; x < type.length; x++) {
+        list.add(type[x].name);
+    }
+
+    createToyListGUI(function (listView, event) {
+        const selectedItem = listView.listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            shower(selectedItem);
+        }
+    }, name, list)
 }
 
 function createToySettingGUI(gridPane, imagePath) {
@@ -1118,4 +1132,90 @@ function removeToysFromList(toysAttached) {
             toy.removeToy();
         }
     }
+}
+
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
+
+function propToLabel(prop) {
+    // add spaces before uppercase letters
+    // then uppercase the first letter of each word
+    return toTitleCase(prop.replace(/([A-Z])/g, " $1"));
+}
+
+function toyCreateDialogFn(item, saver, extraAttrs) {
+    const createDialogFn = function () {
+        var COMBOBOX_ATTRIBUTES = {
+            material: MATERIAL,
+            ballTrapType: BALL_TRAP_TYPE,
+            baseStyle: BUTTPLUG_BASE_STYLE,
+        };
+
+        for (var prop in extraAttrs) {
+            COMBOBOX_ATTRIBUTES[prop] = extraAttrs[prop];
+        }
+                
+        const dialog = createDialog(item.name);
+
+        let gridPane = createGridPaneGUI();
+
+        dialog.imagePath = TAJFileUtils.getRandomMatchingFile(item.getImagePath());
+
+        let row = createToySettingGUI(gridPane, dialog.imagePath);
+
+        let writebackGui = createWritebackGUI(item);
+
+        let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", item.name), "name");
+
+        for (var prop in item) {
+            if (prop == "name") {
+                continue;
+            }
+            if (typeof item[prop] == "function") {
+                continue;
+            }
+            let label = propToLabel(prop);
+            if (typeof item[prop] == "number") {
+                if (COMBOBOX_ATTRIBUTES[prop]) {
+                    let field = writebackGui.addWritebackValue(gridPane.addComboBox(row++, label), prop);
+                    field.addChildren(COMBOBOX_ATTRIBUTES[prop], item[prop]);
+                } else {
+                    let field = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, label, item[prop]), prop);
+                    field.setOnlyDoubles();
+                }        
+            }
+            if (typeof item[prop] == "string") {
+                let field = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, label, item[prop]), prop);      
+            }
+            if (typeof item[prop] == "boolean") {
+                let field = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, label), prop);   
+                field.setSelected(item[prop]);   
+            }
+        }
+
+        let save = createButton("Save");
+        gridPane.setConstraints(save.button, 1, row);
+        gridPane.getChildren().add(save.button);
+
+        save.setOnAction(function (handle) {
+            writebackGui.writeBack();
+            saver();
+            dialog.close();
+        });
+
+        gridPane.addCloseButton(dialog, 2, row++);
+
+        dialog.gridPane = gridPane;
+        dialog.writebackGui = writebackGui;
+
+        return dialog;
+    };
+
+    return createDialogFn;
 }

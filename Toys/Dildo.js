@@ -636,71 +636,63 @@ function getDildoImagePath(name) {
 }
 
 function openDildoList() {
-    let list = javafx.collections.FXCollections.observableArrayList();
-
-    for (let x = 0; x < DILDOS.length; x++) {
-        list.add(DILDOS[x].name);
-    }
-
-    createToyListGUI(function (listView, event) {
-        const selectedDildo = listView.listView.getSelectionModel().getSelectedItem();
-        if (selectedDildo != null) {
-            showDildoGUI(getDildoByName(selectedDildo));
-        }
-    }, "Dildos", list)
+    openToyList(DILDOS, function(name) { showDildoGUI(getDildoByName(name)) }, "Dildos");
 }
 
 function showDildoGUI(dildo) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(dildo.name);
+    const createDialogFn = function() {
+        const dialog = createDialog(dildo.name);
 
-            let gridPane = createGridPaneGUI();
+        let gridPane = createGridPaneGUI();
 
-            let row = createToySettingGUI(gridPane, dildo.getImagePath());
+        dialog.imagePath = TAJFileUtils.getRandomMatchingFile(dildo.getImagePath());
 
-            let writebackGui = createWritebackGUI(dildo);
+        let row = createToySettingGUI(gridPane, dialog.imagePath);
 
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", dildo.name), "name");
-            let diameter = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Diameter", dildo.diameter), "diameter");
-            diameter.setOnlyDoubles();
-            let length = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Length", dildo.length), "length");
-            length.setOnlyDoubles();
+        let writebackGui = createWritebackGUI(dildo);
 
-            let material = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Material"), "material");
-            material.addChildren(MATERIAL, dildo.material);
+        let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", dildo.name), "name");
+        let diameter = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Diameter", dildo.diameter), "diameter");
+        diameter.setOnlyDoubles();
+        let length = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Length", dildo.length), "length");
+        length.setOnlyDoubles();
 
-            /*let vibrating = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Vibrating"), "vibrating");
-            vibrating.setSelected(dildo.vibrating);*/
+        let material = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Material"), "material");
+        material.addChildren(MATERIAL, dildo.material);
 
-            let textured = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Textured"), "textured");
-            textured.setSelected(dildo.textured);
+        /*let vibrating = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Vibrating"), "vibrating");
+        vibrating.setSelected(dildo.vibrating);*/
 
-            let doubleSided = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Double Sided"), "doubleSided");
-            doubleSided.setSelected(dildo.doubleSided);
+        let textured = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Textured"), "textured");
+        textured.setSelected(dildo.textured);
 
-            let suctionCup = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Suction Cup"), "suctionCup");
-            suctionCup.setSelected(dildo.suctionCup);
+        let doubleSided = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Double Sided"), "doubleSided");
+        doubleSided.setSelected(dildo.doubleSided);
 
-            let cumInjection = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Cum Injection"), "cumInjection");
-            cumInjection.setSelected(dildo.cumInjection);
+        let suctionCup = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Suction Cup"), "suctionCup");
+        suctionCup.setSelected(dildo.suctionCup);
 
-            let save = createButton("Save");
-            gridPane.setConstraints(save.button, 1, row);
-            gridPane.getChildren().add(save.button);
+        let cumInjection = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Cum Injection"), "cumInjection");
+        cumInjection.setSelected(dildo.cumInjection);
 
-            save.setOnAction(function (handle) {
-                writebackGui.writeBack();
-                saveDildos();
-                updateDildoMinAndMaxSizes();
-                dialog.close();
-            });
+        let save = createButton("Save");
+        gridPane.setConstraints(save.button, 1, row);
+        gridPane.getChildren().add(save.button);
 
-            gridPane.addCloseButton(dialog, 2, row++);
+        save.setOnAction(function (handle) {
+            writebackGui.writeBack();
+            saveDildos();
+            updateDildoMinAndMaxSizes();
+            dialog.close();
+        });
 
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+        gridPane.addCloseButton(dialog, 2, row++);
+
+        dialog.gridPane = gridPane;
+        dialog.writebackGui = writebackGui;
+
+        return dialog;
+    };
+
+    displayDialog(createDialogFn, saveDildos);
 }

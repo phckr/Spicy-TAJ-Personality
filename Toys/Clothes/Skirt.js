@@ -123,7 +123,7 @@ function createToySetupMenu(toyMultipleObject) {
 
     if(toyMultipleObject.toyInstances.length > 0) {
         menu.registerOption("Edit " +  pluralize(capitalize(toyMultipleObject.name)), ["edit", "modify"], function (answer) {
-            toyMultipleObject.openListGui();
+            toyMultipleObject.openListGui(toyMultipleObject.name);
             return false;
         });
     }

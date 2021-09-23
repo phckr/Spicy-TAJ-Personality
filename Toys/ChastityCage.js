@@ -1222,30 +1222,7 @@ function onChastityKeyReturn() {
 }
 
 function openChastityCageList() {
-    let list = javafx.collections.FXCollections.observableArrayList();
-
-    for (let x = 0; x < CHASTITY_CAGES.length; x++) {
-        list.add(CHASTITY_CAGES[x].name);
-    }
-
-    createToyListGUI(function (listView, event) {
-        const selectedCage = listView.listView.getSelectionModel().getSelectedItem();
-        if (selectedCage != null) {
-            showChastityCageGUI(getChastityCageByName(selectedCage));
-        }
-    }, "Chastity Cages", list)
-}
-
-function showChastityCageGUIHtml(chastityCage) {
-  var gui = createElement('table', {class: 'dialogchastitycage'});
-  var header = createElement("tr");
-  var label = createElement("th");
-  label.append(chastityCage.name);
-  header.append(label);
-  gui.append(header);
-
-  let row = createToySettingGUIHtml(gui, chastityCage.getImagePath());
-  gui.render();
+    openToyList(CHASTITY_CAGES, function (name) { showChastityCageGUI(getChastityCageByName(name)) }, "Chastity Cages");
 }
 
 function showChastityCageGUI(chastityCage) {
@@ -1254,7 +1231,9 @@ function showChastityCageGUI(chastityCage) {
 
         let gridPane = createGridPaneGUI();
 
-        let row = createToySettingGUI(gridPane, chastityCage.getImagePath());
+        dialog.imagePath = TAJFileUtils.getRandomMatchingFile(chastityCage.getImagePath());
+
+        let row = createToySettingGUI(gridPane, dialog.imagePath);
 
         let writebackGui = createWritebackGUI(chastityCage);
 
@@ -1318,139 +1297,7 @@ function showChastityCageGUI(chastityCage) {
         return dialog;
     };
 
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            if (isBrowserConnected()) {
-                var dialog = createDialogFn();
-                dialog.readyUp(dialog.gridPane.gridPane);
-                showDialogAsHtml(dialog);
-                return;
-            }
-        
-            var dialog = createDialogFn();
-            dialog.readyAndShow(dialog.gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    //displayDialog(createDialogFn, saveChastityCages);
+    displayAutoToyDialog(chastityCage, saveChastityCages);
 }
 
-function showDialogAsHtml(dialog) {
-  var gui = createElement('table', {class: 'dialogchastitycage'});
-  var header = createElement("tr");
-  var label = createElement("th");
-  label.append(dialog.name);
-  header.append(label);
-  gui.append(header);
-
-  let scene = dialog.dialog.getScene();
-  let pane = scene.getRoot();   // We know this is a javafx GridPane object
-
-  var tr = createElement('tr');
-  var currentRow = 0;
-  var currentCol = 0;
-
-  sendDebugMessage("pane = " + typeof pane + ": " + pane.getClass() + ": " + pane);
-  const GridPane = pane.class.static;
-
-  let children = pane.getChildren();
-  let writebackGui = dialog.writebackGui;
-
-  for (var childIndex in pane.getChildren()) {
-    let child = children[childIndex];
-    sendDebugMessage("child = " + typeof child + ": " + child.getClass() + ": " + child);
-    var row = GridPane.getRowIndex(child);
-    var col = GridPane.getColumnIndex(child);
-    sendDebugMessage("Got row,col = " + row + "," + col);
-
-    if (row > currentRow) {
-        gui.append(tr);
-        tr = createElement('tr');
-        currentRow += 1;
-        currentCol = 0;
-    }
-    while (col > currentCol) {
-        tr.append(createElement('td'));
-        currentCol += 1;
-    }
-    let td = createElement('td');
-    // Now figure out how to map `child` into HTML
-    let childClass = "" + child.getClass();
-    if (childClass.endsWith(".Text")) {
-        let text = child.getText();
-        if (text.endsWith(":")) {
-            text = text.slice(0, -1);
-        }
-        td.text(text);
-    }
-
-    let name = writebackGui.getAttributeNameForControl(child) || "";
-
-    if (childClass.endsWith(".TextField")) {
-        let text = child.getText();
-        if (!text) {
-            text = "";
-        }
-        let input = createElement('input', {name: name, value: text, type: 'text'});
-        td.append(input);
-    }
-
-    if (childClass.endsWith(".CheckBox")) {
-        var attrs = {type: 'checkbox', name: name};
-        if (child.isSelected()) {
-            attrs.checked = true;
-        }
-        let input = createElement('input', attrs);
-        td.append(input);
-    }
-
-    if (childClass.endsWith(".Button")) {
-        if (child.getText() != "Close") {
-            let button = createElement('button', {type: 'button', name: name, onclick: 'sendClick(".' + gui.attrs.class + '", this, true)'});
-            button.text(child.getText());
-            td.append(button);
-        }
-    }
-
-    if (childClass.endsWith(".ComboBox")) {
-        let items = child.getItems();
-        let selectedItem = child.getValue();
-        let select = createElement('select', {name: name});
-        for (var itemIndex in items) {
-            let item = items[itemIndex];
-            var attrs = {value: item};
-            if (item == selectedItem) {
-                attrs.selected = true;
-            }
-            var option = createElement('option', attrs);
-            option.text(item);
-            select.append(option);
-        }
-        td.append(select);
-    }
-
-    tr.append(td);
-    currentCol += 1;
-  }
-  gui.append(tr);
-
-  sendDebugMessage("About to render: " + gui.serialize());
-
-  registerOnClick('.' + gui.attrs.class, function (click, result) {
-    for (var name in result) {
-          if (name) {
-              var value = result[name];
-              let control = writebackGui.getTAJControlForName(name);
-              if (control) {
-                  if (control.getWriteBackValueForValue) {
-                      value = control.getWriteBackValueForValue(value);
-                  }
-              }
-              writebackGui.object[name] = isNaN(value) ? value : +value;
-          }
-      }
-      saveChastityCages();
-  });
-
-  gui.render();
-}

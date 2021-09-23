@@ -112,38 +112,7 @@ function rateComfortOfToy(toyMultiple) {
 }
 
 BRA_TOY.showEditGui = function(bra) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(bra.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, bra.getImagePath());
-            let writebackGui = createWritebackGUI(bra);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", bra.name), "name");
-
-            let type = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Type"), "type");
-            type.addChildren(BRA_TYPES, bra.type);
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", bra.color), "color");
-
-            let cupSize = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Cup Size", bra.cupSize), "cupSize");
-
-            let sexAppeal = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Sex Appeal", bra.sexAppeal), "sexAppeal");
-            sexAppeal.setOnlyIntegers();
-
-            let comfort = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Comfort", bra.comfort), "comfort");
-            comfort.setOnlyIntegers();
-
-            let visible = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Visible"), "visible");
-            visible.setSelected(bra.visible);
-
-            gridPane.addSaveButton(row, dialog, writebackGui, BRA_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(bra, BRA_TOY.saveToyInstances, {type: BRA_TYPES});
 };
 
 BRA_TOY.loadToyInstances();

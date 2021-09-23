@@ -84,33 +84,7 @@ function rateComfortOfToy(toyMultiple) {
 }
 
 PANTY_TOY.showEditGui = function(panty) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(panty.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, panty.getImagePath());
-            let writebackGui = createWritebackGUI(panty);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", panty.name), "name");
-
-            let type = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Type"), "type");
-            type.addChildren(PANTY_TYPES, panty.type);
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", panty.color), "color");
-
-            let sexAppeal = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Sex Appeal", panty.sexAppeal), "sexAppeal");
-            sexAppeal.setOnlyIntegers();
-
-            let comfort = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Comfort", panty.comfort), "comfort");
-            comfort.setOnlyIntegers();
-
-            gridPane.addSaveButton(row, dialog, writebackGui, PANTY_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(panty, PANTY_TOY.saveToyInstances, {type: PANTY_TYPES});
 };
 
 PANTY_TOY.loadToyInstances();

@@ -179,10 +179,12 @@ function createImageView() {
     return {
         imageView: new javafx.scene.image.ImageView(),
 
+        imagePath: null,
+
         setImage: function (pathToImage) {
             let file = TAJFileUtils.getRandomMatchingFile(pathToImage);
 
-            if(file !== null) {
+            if (file !== null) {
                 let image = new javafx.scene.image.Image("file:" + file.getPath());
                 this.imageView.setImage(image);
             }
@@ -341,4 +343,39 @@ function getFolderFromSelector(title, defaultDir = new java.io.File(java.lang.Sy
     let selectedDirectory = chooser.showDialog(stage);
 
     return selectedDirectory;
+}
+
+function displayDialog(createDialogFn, saveFn) {
+    const RunnableClass = Java.type('java.lang.Runnable');
+    let CustomRunnable = Java.extend(RunnableClass, {
+        run: function () {
+            let dialog = createDialogFn();
+            if (isBrowserConnected()) {
+                dialog.readyUp(dialog.gridPane.gridPane);
+                showDialogAsHtml(dialog, saveFn);
+                return;
+            }
+        
+            dialog.readyAndShow(dialog.gridPane.gridPane);
+        }
+    });
+    runGui(new CustomRunnable());
+}
+
+function displayAutoToyDialog(item, saveFn) {
+    const RunnableClass = Java.type('java.lang.Runnable');
+    let CustomRunnable = Java.extend(RunnableClass, {
+        run: function () {
+            let dialog = toyCreateDialogFn(item, saveFn)();
+            if (isBrowserConnected()) {
+                dialog.readyUp(dialog.gridPane.gridPane);
+                showDialogAsHtml(dialog, saveFn);
+                return;
+            }
+        
+            dialog.readyAndShow(dialog.gridPane.gridPane);
+        }
+    });
+    runGui(new CustomRunnable());
+
 }
