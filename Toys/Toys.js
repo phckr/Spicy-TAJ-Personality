@@ -1,5 +1,7 @@
 const DEFAULT_TOY_COOLDOWN_MINUTES = 5;
 
+const ALL_TOY_TYPES = new Set();
+
 {
     let pathLength = getPersonalityPath().length;
     let files = getScriptFilesInFolder('Toys', true);
@@ -1004,7 +1006,7 @@ function askForNewToyName(toyMultiple) {
 
 function createToyListGUIHtml(onClick, name, list) {
   var id = name.replace(/\s+/g, "").toLowerCase();
-  var gui = createElement('table', {class: 'dialogtoylist' + id});
+  var gui = createElement('table', {class: 'capitalize dialogtoylist' + id});
   var header = createElement("tr");
   var label = createElement("th");
   label.append(name);
@@ -1081,6 +1083,8 @@ function createToySettingGUIHtml(table, imagePath) {
 }
 
 function openToyList(type, shower, name) {
+    ALL_TOY_TYPES.add(type);
+
     let list = javafx.collections.FXCollections.observableArrayList();
 
     for (let x = 0; x < type.length; x++) {
@@ -1101,14 +1105,16 @@ function createToySettingGUI(gridPane, imagePath) {
     gridPane.setVGap(5);
 
     let row = 0;
-    let image = createImageView();
-    image.setImage(imagePath);
-    image.setFitWidth(150);
-    image.setPreserveRatio(true);
-    image.setSmooth(true);
-    image.setCache(true);
-    gridPane.setConstraints(image.imageView, 1, row++);
-    gridPane.getChildren().add(image.imageView);
+    if (imagePath) {
+        let image = createImageView();
+        image.setImage(imagePath);
+        image.setFitWidth(150);
+        image.setPreserveRatio(true);
+        image.setSmooth(true);
+        image.setCache(true);
+        gridPane.setConstraints(image.imageView, 1, row++);
+        gridPane.getChildren().add(image.imageView);
+    }
 
     return row;
 }
@@ -1181,23 +1187,28 @@ function toyCreateDialogFn(item, saver, extraAttrs) {
                 continue;
             }
             let label = propToLabel(prop);
-            if (typeof item[prop] == "number") {
-                if (COMBOBOX_ATTRIBUTES[prop]) {
-                    let field = writebackGui.addWritebackValue(gridPane.addComboBox(row++, label), prop);
-                    field.addChildren(COMBOBOX_ATTRIBUTES[prop], item[prop]);
-                } else {
-                    let field = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, label, item[prop]), prop);
-                    field.setOnlyDoubles();
-                }        
-            }
-            if (typeof item[prop] == "string") {
+            if (COMBOBOX_ATTRIBUTES[prop]) {
+                let field = writebackGui.addWritebackValue(gridPane.addComboBox(row++, label), prop);
+                field.addChildren(COMBOBOX_ATTRIBUTES[prop], item[prop]);
+            } else if (typeof item[prop] == "number") {
+                let field = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, label, item[prop]), prop);
+                field.setOnlyDoubles();        
+            } else if (typeof item[prop] == "string") {
                 let field = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, label, item[prop]), prop);      
-            }
-            if (typeof item[prop] == "boolean") {
+            } else if (typeof item[prop] == "boolean") {
                 let field = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, label), prop);   
                 field.setSelected(item[prop]);   
             }
         }
+
+        let del = createButton("Delete");
+        gridPane.setConstraints(del.button, 0, row);
+        gridPane.getChildren().add(del.button);
+        del.setOnAction(function (handle) {
+            writebackGui.remove();
+            saver();
+            dialog.close();
+        });
 
         let save = createButton("Save");
         gridPane.setConstraints(save.button, 1, row);

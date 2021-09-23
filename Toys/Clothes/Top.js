@@ -78,33 +78,7 @@ TOP_TOY.setupNewToy = function() {
 };
 
 TOP_TOY.showEditGui = function(top) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(top.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, top.getImagePath());
-            let writebackGui = createWritebackGUI(top);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", top.name), "name");
-
-            let type = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Type"), "type");
-            type.addChildren(TOP_TYPES, top.type);
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", top.color), "color");
-
-            let sexAppeal = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Sex Appeal", top.sexAppeal), "sexAppeal");
-            sexAppeal.setOnlyIntegers();
-
-            let comfort = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Comfort", top.comfort), "comfort");
-            comfort.setOnlyIntegers();
-
-            gridPane.addSaveButton(row, dialog, writebackGui, TOP_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(top, TOP_TOY.saveToyInstances, {type: TOP_TYPES});
 };
 
 TOP_TOY.loadToyInstances();

@@ -71,32 +71,7 @@ JEWELLERY_TOY.setupNewToy = function() {
 };
 
 JEWELLERY_TOY.showEditGui = function(jewellery) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(jewellery.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, jewellery.getImagePath());
-            let writebackGui = createWritebackGUI(jewellery);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", jewellery.name), "name");
-
-            let type = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Type"), "type");
-            type.addChildren(JEWELLERY_TYPES, jewellery.type);
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", jewellery.color), "color");
-
-            let engraving = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Engraving", jewellery.engraving), "engraving");
-
-            let visible = writebackGui.addWritebackValue(gridPane.addCheckBox(row++, "Visible"), "visible");
-            visible.setSelected(jewellery.visible);
-
-            gridPane.addSaveButton(row, dialog, writebackGui, JEWELLERY_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(jewellery, JEWELLERY_TOY.saveToyInstances, {type: JEWELLERY_TYPES});
 };
-
+ 
 JEWELLERY_TOY.loadToyInstances();

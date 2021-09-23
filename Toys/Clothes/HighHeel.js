@@ -84,27 +84,7 @@ HIGH_HEEL_TOY.createToyInstance = function(name, height, color) {
 };
 
 HIGH_HEEL_TOY.showEditGui = function(highHeel) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(highHeel.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, highHeel.getImagePath());
-            let writebackGui = createWritebackGUI(highHeel);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", highHeel.name), "name");
-
-            let height = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Height", highHeel.height), "height");
-            height.setOnlyDoubles();
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", highHeel.color), "color");
-
-            gridPane.addSaveButton(row, dialog, writebackGui, HIGH_HEEL_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(highHeel, HIGH_HEEL_TOY.saveToyInstances);
 };
 
 HIGH_HEEL_TOY.loadToyInstances();

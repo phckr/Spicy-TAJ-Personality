@@ -24,6 +24,15 @@ function createWritebackGUI(object) {
             return this.attributeMap.get(attributeName);
         },
 
+        remove: function () {
+            ALL_TOY_TYPES.forEach(function (type) {
+                var index = type.indexOf(this.object);
+                if (index >= 0) {
+                    type.splice(index, 1);
+                }
+            }, this);
+        },
+
         writeBack: function () {
             this.attributeMap.forEach(function (value, key) {
                 object[key] = value.getWriteBackValue();
@@ -362,11 +371,11 @@ function displayDialog(createDialogFn, saveFn) {
     runGui(new CustomRunnable());
 }
 
-function displayAutoToyDialog(item, saveFn) {
+function displayAutoToyDialog(item, saveFn, comboMaps) {
     const RunnableClass = Java.type('java.lang.Runnable');
     let CustomRunnable = Java.extend(RunnableClass, {
         run: function () {
-            let dialog = toyCreateDialogFn(item, saveFn)();
+            let dialog = toyCreateDialogFn(item, saveFn, comboMaps)();
             if (isBrowserConnected()) {
                 dialog.readyUp(dialog.gridPane.gridPane);
                 showDialogAsHtml(dialog, saveFn);

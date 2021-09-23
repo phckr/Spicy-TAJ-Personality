@@ -85,27 +85,7 @@ SKIRT_TOY.setupNewToy = function() {
 };
 
 SKIRT_TOY.showEditGui = function(skirt) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(skirt.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, skirt.getImagePath());
-            let writebackGui = createWritebackGUI(skirt);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", skirt.name), "name");
-
-            let height = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Height", skirt.height), "height");
-            height.setOnlyDoubles();
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", skirt.color), "color");
-
-            gridPane.addSaveButton(row, dialog, writebackGui, SKIRT_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(skirt, SKIRT_TOY.saveToyInstances);
 };
 
 SKIRT_TOY.loadToyInstances();

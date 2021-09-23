@@ -61,6 +61,8 @@ function posenetResponse(message) {
         var handler = posenetOnClick[result.dialog];
         if (handler) {
             handler(result.click, result.args);
+        } else {
+            sendDebugMessage("Unable to find handler for " + result.dialog);
         }
     }
 }

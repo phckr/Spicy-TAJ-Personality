@@ -51,27 +51,7 @@ TROUSER_TOY.setupNewToy = function() {
 };
 
 TROUSER_TOY.showEditGui = function(trouser) {
-    const RunnableClass = Java.type('java.lang.Runnable');
-    let CustomRunnable = Java.extend(RunnableClass, {
-        run: function () {
-            const dialog = createDialog(trouser.name);
-            let gridPane = createGridPaneGUI();
-            let row = createToySettingGUI(gridPane, trouser.getImagePath());
-            let writebackGui = createWritebackGUI(trouser);
-
-            let nameBox = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Name", trouser.name), "name");
-
-            let type = writebackGui.addWritebackValue(gridPane.addComboBox(row++, "Type"), "type");
-            type.addChildren(TROUSER_TYPES, trouser.type);
-
-            let colour = writebackGui.addWritebackValue(gridPane.addTextSetting(row++, "Color", trouser.color), "color");
-
-            gridPane.addSaveButton(row, dialog, writebackGui, TROUSER_TOY.saveToyInstances);
-            gridPane.addCloseButton(dialog, 2, row++);
-            dialog.readyAndShow(gridPane.gridPane);
-        }
-    });
-    runGui(new CustomRunnable());
+    displayAutoToyDialog(trouser, TROUSER_TOY.saveToyInstances, {type: TROUSER_TYPES});
 };
 
 TROUSER_TOY.loadToyInstances();
