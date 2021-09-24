@@ -694,5 +694,5 @@ function showDildoGUI(dildo) {
         return dialog;
     };
 
-    displayDialog(createDialogFn, saveDildos);
+    displayDialog(createDialogFn, function() { saveDildos(); updateDildoMinAndMaxSizes(); });
 }

@@ -97,11 +97,52 @@
                         wetSelf = true;
                     }
                 }
+            } else if (PANTY_TOY.isPlayAllowed()) {
+                const panties = PANTY_TOY.getToysNotOfTypes(['crotchless']);
+                if (panties.length > 0) {
+                    const panty = random(panties);
+                    PANTY_TOY.addCurrentToy(panty);
+
+                    sendMessage('Put on your ' + panty.getName() + ' and tell me when done. <showImage=' + panty.getImagePath() + '>');
+                    waitForDone(300);
+                }
+            }
+
+            if (STOCKING_TOY.isToyOn()) {
+                if (isChance(50)) {
+                    wetSelf = true;
+                }
+            } else if (STOCKING_TOY.isPlayAllowed()) {
+                const stockings = STOCKING_TOY.getToysNotOfTypes(['nomatch']);
+                if (stockings.length > 0) {
+                    const stocking = random(stockings);
+                    STOCKING_TOY.addCurrentToy(stocking);
+                    sendMessage('Put on your ' + stocking.getName() + ' and tell me when done. <showImage=' + stocking.getImagePath() + '>');
+                    waitForDone(300);
+                }
             }
 
             // check last wetself date
 
-            if (position && !wetSelf) {
+            var peeSelf = false;
+            var haveBath = false;
+            var squirtSelf = false;
+
+            if (!wetSelf && !CHASTITY_CAGES.isToyOn()) {
+                if (sendYesOrNoQuestion("Do you a shower, bath, or other area that can get wet?")) {
+                    haveBath = true;
+                    sendMessage("%Good%");
+                }
+
+                if (sendYesOrNoQuestion("Do you have %Units:1000,ml% squirt bottle?")) {
+                    squirtSelf = chance(25);
+                } 
+                if (!squirtSelf) {
+                    peeSelf = chance(33);
+                }
+            }
+
+            if (position && !wetSelf && !peeSelf) {
                 sendMessage("Get your measuring jug.");
             }
             var noAction1 = 0;
@@ -137,6 +178,52 @@
                 sendMEssage("Tell me when you are all done.");
                 waitForDone(300);
                 sendMessage('%Good%');
+            } else if (peeSelf) {
+                sendMessage("I've decided to watch you pee on yourself.");
+                sendMessage("But this isn't just you peeing down your leg.");
+                sendMessage("Much better than that.");
+                sendMessage("Find some area that can get wet. Maybe a shower or bathtub.");
+                sendMessage("Take your device with you as I want to watch.");
+                sendMessage("Tell me when you are there");
+                waitForDone(300);
+                sendMessage("You are going to lie in the shower/bath/on the floor.");
+                sendMessage("Then you are going to try and pee into your mouth!");
+                sendMessage("You should keep your mouth open, and I don't want you to swallow.");
+                sendMessage("I want you to fill your mouth with your pee.");
+                sendMessage("If it helps, you can think of me standing over you, about to pour golden liquid all over you.");
+                sendMessage("Ok. Get started. Tell me when you are done.");
+                wait(20);
+                takeSubPhotoAndSaveIntoFolder("Images/Spicy/SelfHumiliation", "selfpee_");
+                waitForDone();
+            } else if (squirtSelf) {
+                sendMessage("I've decided to watch you pee on yourself.");
+                sendMessage("But this isn't just you peeing down your leg.");
+                sendMessage("This is going to require skill.");
+                sendMessage("Find some area that can get wet. Maybe a shower or bathtub.");
+                sendMessage("Take your device with you as I want to watch.");
+                sendMessage("Get your squirt bottle, and tell me when you are there.");
+                waitForDone(300);
+                sendMessage("Now fill your squirt bottle from the measuring jug.");
+                sendMessage("You are going to lie in the shower/bath/on the floor.");
+                sendMessage("Then you are going to try and squirt onto %MyCock% %Cock%!");
+                sendMessage("If it helps, you can think of me standing over you, about to pour golden liquid all over you.");
+                sendMessage("In case you think that this is easy, I want you to hold the bottle above your face and squirt from there.");
+                sendMessage("Ok. Get started, but only use half the bottle. Tell me when you are done.");
+                wait(20);
+                takeSubPhotoAndSaveIntoFolder("Images/Spicy/SelfHumiliation", "squirtpee_");
+                waitForDone();
+                sendMessage("That looked like you had fun from here.");
+                sendMessage("Have to do something about that.")
+                sendMessage("I know what.");
+                sendMessage("Now you are going to try and squirt into your mouth!");
+                sendMessage("You should keep your mouth open, and I don't want you to swallow.");
+                sendMessage("I want you to fill your mouth with your pee.");
+                sendMessage("Just think of me, peeing into your open mouth.");
+                sendMessage("I want you to hold the bottle by %MyCock% %Cock% and squirt from there.");
+                sendMessage("Ok. Get started and use the rest of the bottle. Tell me when you are done.");
+                wait(20);
+                takeSubPhotoAndSaveIntoFolder("Images/Spicy/SelfHumiliation", "squirtpee_");
+                waitForDone();
             } else {
                 sendMessage("I command you to fill that measuring jug with as much pee as possible.");
                 sendMessage("The more the better as I have some ideas on how to use it.");
@@ -235,6 +322,8 @@
                     sendMessage("Keep that measuring jug handy, you might be able to fill it some more.");
                 }
             }
+
+            setTempVar("waterPeeTime", Date.now());
         }
 
         if (prolongedSessionTime && prolongedSessionTime < 25) {
