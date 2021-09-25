@@ -59,6 +59,7 @@ run("Utils/TimeUtils.js");
 run("Utils/LegacyUtils.js");
 run("Utils/MediaUtils.js");
 run("Utils/HtmlUtils.js");
+run("Utils/TruthUtils.js");
 
 run("Session/History.js");
 

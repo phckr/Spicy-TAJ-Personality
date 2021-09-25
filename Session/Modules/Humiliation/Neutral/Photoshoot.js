@@ -108,7 +108,7 @@
             sendMessage(random("I'll ring my bell when we are done.", "When we are done, I'll ring my bell."));
             for (var i = randomInt(10, 20); i > 0; i--) {
               var flag = {};
-              setPhotoMotionDetect(function(motion) { flag.motion = motion; }));
+              setPhotoMotionDetect(function(motion) { flag.motion = motion; });
               var pathname = addRandomSuffix("Images/Spicy/SelfHumiliation/photoshoot_");
               tryTakePhoto(function() { return getSubPresent() && !flag.motion; }, pathname);
               setPhotoMotionDetect(null);

@@ -535,3 +535,21 @@ function createAnswerInput(listOfOptions) {
     }
     return answerObject;
 }
+
+function sendQuestion(question, checkFn = null, exitIf = null) {
+    let answer = sendInput(question, -1);
+
+    answer.loop(exitIf);
+
+    while (true) {
+        if (exitIf && exitIf()) {
+          break;
+        }
+
+        if (checkFn && !checkFn(answer.getAnswer())) {
+            answer.loop(exitIf);
+        } else {
+            return answer.getAnswer();
+        }
+    }
+}

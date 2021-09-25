@@ -1,0 +1,3 @@
+{
+    truthAskQuestions(true);
+}

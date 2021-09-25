@@ -182,9 +182,7 @@ If you were going to include one other person in a sexual activity, would it be 
 If you were into the same sex, which celebrity would you go for?
 If you were invisible for a day, what would you do with your superpower?
 If you were to create an original sex move, what would you call it?
-If you were to do manual stimulation right now what position would you like to be in?
 If you were to give anal play right now what position would you like to be in?
-If you were to give manual stimulation right now what position would you like to be in?
 If you were to give oral sex right now, what position would you like to be in?
 If you were to have a threesome, who would you want the third person to be?
 If you were to pretend to be someone else while fucking tonight/now who would you like to be?
@@ -208,13 +206,12 @@ Name two places where you would want to have sex with %YourPartner%
 On a scale of 1 to 5, how dirty is your mood where 5 is the dirtiest?
 One choice for the rest of your life oral or penetrative sex?
 Partner names 3 celebrities - you must pick 1 to fight, 1 to fuck and 1 to holiday with
-Rank your top 3 positions to have intercourse in.
-Rank your top 3 positions to perform manual stimulation in.
-Rank your top 3 positions to perform oral in.
-Rank your top 3 positions to receive manual stimulation in.
-Rank your top 3 positions to receive oral in.
-Rank your top 5 people you would like to fuck other then me.
-Read about a new fetish, and talk about it.
+Rank your top 3 positions to have intercourse in with %YourPartner%.
+Rank your top 3 positions to perform manual stimulation on %YourPartner%.
+Rank your top 3 positions to perform oral on %YourPartner%.
+Rank your top 3 positions to receive manual stimulation from %YourPartner%.
+Rank your top 3 positions to receive oral from %YourPartner%.
+Rank your top 5 people you would like to fuck other than %YourPartner%.
 Say 2 nice things about %YourPartner%
 Sexy body or big package/breasts?
 Shaved, trim, or natural?
