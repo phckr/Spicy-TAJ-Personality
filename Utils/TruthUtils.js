@@ -14,6 +14,45 @@ const TRUTH_NAUGHTY_WORDS = [
 
 const TRUTH_NAUGHTY_REGEX = new RegExp("\\b(" + TRUTH_NAUGHTY_WORDS.join('|') + ")", "g");
 
+/**
+ * Get an object with properties where the property names are words
+ * and the values are the counts across all answers.
+ * @returns Object with one property per distinct word.
+ */
+function truthGetWordFrequencies() {
+    var result = {};
+    for (var i = 0; i < TRUTHS.length; i++) {
+        TRUTHS[i].addWordCounts(result);
+    }
+    return result;
+}
+
+/**
+ * Gets a sorted list of words by frequency. The most used words come
+ * first in the resulting list. If `restrict` is passed, then the resulting
+ * list of words will only include words from that list.
+ * @param {Iterable} restrict List of words to include in output list.
+ * @returns List of words
+ */
+function truthGetSortedWordUse(restrict) {
+    var all = truthGetWordFrequencies();
+    var result = Object.keys(all);
+    if (restrict) {
+        let restrictedSet = new Set(restrict);
+        var temp = result;
+        result = [];
+        for (var i = 0; i < temp.length; i++) {
+            if (restrictedSet.has(temp[i])) {
+                result.push(temp[i]);
+            }
+        }
+    }
+
+    result.sort(function (a, b) { return all[b] - all[a]; });
+
+    return result;
+}
+
 function truthValidateAnswer(answer) {
     answer = answer.trim().replace(/\s+/g, " ");
     if (answer.length < 30) {
@@ -104,6 +143,13 @@ function createTruth(question, answer, partnerMentioned, naughtyWords) {
         partnerMentioned: partnerMentioned || (question && question.contains("%YourPartner%")),
         naughtyWords: naughtyWords || truthCountNaughty(answer),
         answered: Date.now(),
+
+        addWordCounts: function(counts) {
+            var words = this.answer.toLowerCase().match(/\b(\w|')+\b/g);
+            for (var i = 0; i < words.length; i++) {
+                counts[words[i]] = (counts[words[i]] || 0) + 1;
+            }
+        },
 
         toString: function () {
             return JSON.stringify(this);

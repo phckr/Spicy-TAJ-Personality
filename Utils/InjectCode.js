@@ -1,10 +1,20 @@
+if (injectCodeMessage) {
+    var result = eval(injectCodeMessage);
+
+    if (result) {
+        sendVirtualAssistantMessage(JSON.stringify(result));
+    } else {
+        sendVirtualAssistantMessage("Nothing much returned.");
+    }
+} else {
+truthAskQuestions();
 if (0) {
 setCurrentSender(SENDER_ASSISTANT);
 setupNewCage();
 sendMessage("Done!");
-}
-tryTakePhoto("Ready?", "Images/Spicy/ptest");
+tryTakePhoto("Ready <i>or are you</i>?", "Images/Spicy/ptest");
 showImage("Images/Spicy/ptest.*");
+}
 //run("Session/StartSession.js");
 if (0) {
 MODULE_HISTORY.clearHistory();
@@ -282,6 +292,6 @@ for(let x = 0; x < tasks.length; x++) {
     getAnalOrgasmInstructions(analOrgasmType, orgasmCategory);
 }
 */
-{
+
 
 }
