@@ -1,4 +1,8 @@
-{
+function waterGetFrequency() {
+    return { min: 30, max: 30 };
+}
+
+function waterRun(phase) {
     const GLASSES = 5;
 
     // This will get run before the session starts and between each module and at the end
@@ -11,9 +15,9 @@
     }
 
     var prolongedSessionTime = getVar(VARIABLE.PROLONGED_SESSION_TIME, 0);
-    var possibleSessionEnd = getVar("themePossibleSessionEnd", 0);
+    var sessionEnd = phase == THEME_PHASE.LAST;
 
-    if (!possibleSessionEnd && (RAPID_TESTING || Date.now() - getVar("waterLastAction", 0) > 1000 * 60 * 10)) {
+    if (!sessionEnd && (RAPID_TESTING || Date.now() - getVar("waterLastAction", 0) > 1000 * 60 * 10)) {
         var visitNumber = getVar("waterVisitNumber", 0);
         setTempVar("waterVisitNumber", visitNumber + 1);
 
@@ -76,7 +80,7 @@
     }
 
     if (PEE_LIMIT.isAllowed()) {
-        if (possibleSessionEnd || earlyPee) {
+        if (sessionEnd || earlyPee) {
             action = true;
             // Now for the next step
             if (getVar("waterVolume", 0)) {
@@ -318,7 +322,7 @@
                 values.add("" + volume);
                 setVar("waterPeeVolume", values);
                 setTempVar("waterVolume", volume);
-                if (!prolongedSessionTime || !possibleSessionEnd) {
+                if (!prolongedSessionTime || !sessionEnd) {
                     sendMessage("Keep that measuring jug handy, you might be able to fill it some more.");
                 }
             }

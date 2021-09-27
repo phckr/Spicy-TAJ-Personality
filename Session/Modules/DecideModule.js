@@ -1,18 +1,18 @@
 //TODO: Pain Modules: Sounding
 
-{
+let sessionTheme = pickTheme() || { run: function() {} };
+
+function decideModule() {
     let moduleCounter = 0;
 
-    let theme = pickTheme();
+    let theme_phase = THEME_PHASE.START;
 
     //End session if we only have <= 10% of session time left
     while (!hasSessionTimePassed(Math.ceil((getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0))*0.90))) {
         checkInteraction();
 
-        if (theme) {
-          sendDebugMessage("Running theme: " + theme);
-          run(theme);
-        }
+        sessionTheme.run(theme_phase);
+        theme_phase = THEME_PHASE.INTERMEDIATE;
 
         //Apply random toys
         interactWithRandomToys();
@@ -249,13 +249,6 @@
         }
     }
 
-    if (theme) {
-      sendDebugMessage("Running theme: " + theme);
-      setTempVar("themePossibleSessionEnd", 1);
-      run(theme);
-      setTempVar("themePossibleSessionEnd", 0);
-    }
-
     //Maybe prolong session if we haven't already
     if (!isVar(VARIABLE.PROLONGED_SESSION_TIME) && wouldLikeToProlongSession()) {
         //QUALITY: More diverse chat
@@ -267,14 +260,16 @@
             //Add another 10 to 20 minutes
             setTempVar(VARIABLE.PROLONGED_SESSION_TIME, randomInteger(10, 20));
             setDate(VARIABLE.LAST_PROLONGED_SESSION);
-            run("Session/Modules/DecideModule.js");
+            decideModule();
         } else {
             sendMessage('I can understand that you might have something to attend to');
             changeMeritMedium(true);
             sendMessage('It\'s okay for me');
+            sessionTheme.run(THEME_PHASE.LAST);
             run('Session/End/DecideEnd.js');
         }
     } else {
+        sessionTheme.run(THEME_PHASE.LAST);
         run('Session/End/DecideEnd.js')
     }
 }

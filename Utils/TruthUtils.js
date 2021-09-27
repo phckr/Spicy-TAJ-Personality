@@ -210,7 +210,6 @@ function truthGetRandomPartnerMention() {
 
 function truthAskQuestions(partnerMention) {
     if (getVar("truthSessionIndex", 0) == 0) {
-        loadTruths();
         sendMessage(random("I %Want% to get to know you a bit better %SubName%", "I %Want% to know more about you."));
         if (TRUTHS.length > 0) {
             sendMessage("You know how this goes from before");

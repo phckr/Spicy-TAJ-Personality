@@ -101,3 +101,7 @@ function stopStroking() {}
 function replaceVocab(string) {}
 
 function startStroking(bpm) {}
+
+function allocateTempUrl(path) { return ""; }
+
+function sendWebControlJson(str) {}

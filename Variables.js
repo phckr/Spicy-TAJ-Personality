@@ -388,10 +388,14 @@ const VARIABLE = {
 
     FULL_TIME_TRIAL_UNTIL: "fullTimeTrialUntil",
 
+    // Theme
+    THEME_LAST_SESSION_NUMBER: "themeLastSessionNumber",
+
     //Session
     LAST_TEASE_SESSION: "lastTeaseSession",
     CURRENT_SESSION_DATE: "currentSessionDate",
     CURRENT_SESSION_ACTIVE: "currentSessionActive",
+    CURRENT_SESSION_NUMBER: "currentSessionNumber",
 
     CURRENT_SPECIAL_SESSION: "currentSpecialSession",
     LAST_SPECIAL_SESSION: "lastSpecialSession",

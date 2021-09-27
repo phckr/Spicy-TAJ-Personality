@@ -2,12 +2,15 @@
     setCurrentSender(SENDER_TAJ);
     setDate(VARIABLE.CURRENT_SESSION_DATE);
     setTempVar(VARIABLE.CURRENT_SESSION_ACTIVE, true);
+    setVar(VARIABLE.CURRENT_SESSION_NUMBER, getVar(VARIABLE.CURRENT_SESSION_NUMBER, 0) + 1);
 
     sendDebugMessage('Starting session with mood: ' + getMood());
 
     //Toys
     updateSessionButtplugs();
     updateSessionDildos();
+
+    loadTruths();
 
     //TODO: Special day test (birthday etc.)
 

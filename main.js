@@ -21,6 +21,8 @@ let startMillis = new Date().getTime();
 showImage("Images/Spicy/Intro/SpicyGif*.gif");
 run("Variables.js");
 
+run("Utils/BackwardsCompat.js");
+
 run("Utils/SoundUtils.js");
 run("Utils/FileUtils.js");
 run("Utils/ArrayUtils.js");
