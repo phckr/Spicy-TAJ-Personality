@@ -147,5 +147,6 @@ setSender(1);
 //Full time specific checks are made in this file (we need it for non full time too)
 run("Startup/FullTime/FullTimeCheck.js");
 
+run("Session/Themes.js");
 //run("Session/StartSession.js");
 run("Assistant/AssistantLobby.js");

@@ -1,6 +1,8 @@
 //TODO: Pain Modules: Sounding
 
-let sessionTheme = pickTheme() || { run: function() {} };
+if (typeof sessionTheme == "undefined") {
+    let sessionTheme = pickTheme() || { run: function () { } };
+}
 
 function decideModule() {
     let moduleCounter = 0;
@@ -8,7 +10,7 @@ function decideModule() {
     let theme_phase = THEME_PHASE.START;
 
     //End session if we only have <= 10% of session time left
-    while (!hasSessionTimePassed(Math.ceil((getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0))*0.90))) {
+    while (!hasSessionTimePassed(Math.ceil((getVar(VARIABLE.DEVOTION) + getVar(VARIABLE.PROLONGED_SESSION_TIME, 0)) * 0.90))) {
         checkInteraction();
 
         sessionTheme.run(theme_phase);
@@ -78,10 +80,10 @@ function decideModule() {
         let skipModules = false;
         if (moduleCounter === 0) {
             //Continue special session (if session ended early)
-            if(isVar(VARIABLE.CURRENT_SPECIAL_SESSION)) {
+            if (isVar(VARIABLE.CURRENT_SPECIAL_SESSION)) {
                 let specialSession = getSpecialSessionById(getVar(VARIABLE.CURRENT_SPECIAL_SESSION));
 
-                if(specialSession !== undefined) {
+                if (specialSession !== undefined) {
                     ACTIVE_SPECIAL_SESSION = specialSession;
                     continueSpecialSession();
 
@@ -105,11 +107,11 @@ function decideModule() {
             }
         }
 
-        if(!skipModules) {
+        if (!skipModules) {
             const moduleChance = 50;
             let teaseModuleChance = moduleChance;
 
-            if(MOOD.TEASE.isActive()) {
+            if (MOOD.TEASE.isActive()) {
                 sendDebugMessage('Mood ' + MOOD.TEASE.name + ' is active, boosting module chance');
                 teaseModuleChance += MOOD.TEASE.getChanceBooster();
             }
@@ -177,14 +179,14 @@ function decideModule() {
             //No pain modules if pain is hard limit
             let painModuleChance = PAIN_LIMIT.isAllowed() ? moduleChance : 0;
 
-            if(MOOD.PUNISH.isActive()) {
+            if (MOOD.PUNISH.isActive()) {
                 sendDebugMessage('Mood ' + MOOD.PUNISH.name + ' is active, boosting module chance');
                 painModuleChance += MOOD.PUNISH.getChanceBooster();
             }
 
             let slaveModuleChance = moduleChance;
 
-            if(MOOD.SLAVE.isActive()) {
+            if (MOOD.SLAVE.isActive()) {
                 sendDebugMessage('Mood ' + MOOD.SLAVE.name + ' is active, boosting module chance');
                 slaveModuleChance += MOOD.SLAVE.getChanceBooster();
             }
@@ -194,7 +196,7 @@ function decideModule() {
             if (!HUMILIATION_LIMIT.isAllowed()) {
                 humiliationModuleChance = 0;
             } else {
-                if(MOOD.HUMILIATION.isActive()) {
+                if (MOOD.HUMILIATION.isActive()) {
                     sendDebugMessage('Mood ' + MOOD.HUMILIATION.name + ' is active, boosting module chance');
                     humiliationModuleChance += MOOD.HUMILIATION.getChanceBooster();
                 }
@@ -274,4 +276,4 @@ function decideModule() {
     }
 }
 
-
+decideModule();

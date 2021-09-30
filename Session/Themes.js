@@ -6,7 +6,7 @@ const THEME_PHASE = {
     LAST: 2,
 };
 
-function themesLoadAdd() {
+function themesLoadAll() {
     var themesPath = getPersonalityPath() + "/Session/Themes";
     if (getFile(themesPath).exists()) {
         var themes = getScriptFilesInFolder(themesPath + "/");
@@ -81,7 +81,7 @@ function pickTheme() {
         }
     }
 
-    var range = total_exact + total_approx * exact_scale;
+    var range = total_exact + total_approx * approx_scale;
 
     var val = Math.random() * range;
 

@@ -8,7 +8,13 @@ let posenetMotionDetected = null;
 let posenet_last_message = null;
 let posenetOnClick = {};
 
-function posenetResponse(message) {
+function posenetResponse(message, answers) {
+    for (var i = 0; i < answers.length; i++) {
+        posenetResponseInner(answers[i]);
+    }
+}
+
+function posenetResponseInner(message) {
     var result = JSON.parse(message.substring(17));
     result.when = Date.now();
     posenet_last_message = result;
