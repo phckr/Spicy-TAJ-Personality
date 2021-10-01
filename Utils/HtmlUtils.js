@@ -29,9 +29,11 @@ var HtmlElement = {
     tag: null,
     append: function (item) {
         this.children.push(item);
+        return this;
     },
     empty: function () {
         this.children = [];
+        return this;
     },
     serializeAttrs: function () {
         var result = "";
@@ -60,9 +62,15 @@ var HtmlElement = {
     },
     text: function (text) {
         this.children = [escapeHtml(text)];
+        return this;
     },
     html: function (html) {
         this.children = [html];
+        return this;
+    },
+    attr: function (name, value) {
+        this.attrs[name] = value;
+        return this;
     },
 };
 

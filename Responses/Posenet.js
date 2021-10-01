@@ -18,19 +18,18 @@ function posenetResponseInner(message) {
     var result = JSON.parse(message.substring(17));
     result.when = Date.now();
     posenet_last_message = result;
+    sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms for " + Object.keys(result));
     if (result.command) {
         sendDebugMessage("Command: " + JSON.stringify(result));
         if (result.command == "vocab") {
             sendWebControlJson(JSON.stringify({ response: result.command, arg: result.arg, result: replaceVocab(result.arg) }));
         }
-        return;
     }
 
     if (result.position) {
         sendDebugMessage("Posenet: " + JSON.stringify(result.position));
         const previous = posenet_result;
         posenet_result = result;
-        sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms");
         setTimeout(function () { if (posenetMotionDetected) { posenetMotionDetected(result.position.motion); } }, 0);
         setTimeout(function () {
             sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
@@ -64,6 +63,7 @@ function posenetResponseInner(message) {
     }
 
     if (result.click) {
+        sendDebugMessage("Handling click for " + result.dialog);
         var handler = posenetOnClick[result.dialog];
         if (handler) {
             handler(result.click, result.args);

@@ -14,6 +14,11 @@ const TRUTH_NAUGHTY_WORDS = [
 
 const TRUTH_NAUGHTY_REGEX = new RegExp("\\b(" + TRUTH_NAUGHTY_WORDS.join('|') + ")", "g");
 
+const TRUTH_BASEWORDCACHE = {
+  cache: {},
+  count: -1,
+};
+
 /**
  * Get an object with properties where the property names are words
  * and the values are the counts across all answers.
@@ -74,20 +79,22 @@ function truthAskQuestionAndSave(partnerMention) {
     var question;
     var partnerQuestion;
 
+    var matchingTruths = [];
+
     for (var i = 0; i < 30; i++) {
         question = replaceVocab("%Truth%", 99);
-        if (partnerMention) {
-            if (question.contains("%YourPartner%")) {
-                partnerQuestion = question;
-            } else {
-                continue;
-            }
-        }
         let truth = getTruthByQuestion(question);
         if (!truth || truth.isOld()) {
-            break;
+            if (!partnerMention || question.contains("%YourPartner%")) {
+                if (!truth) {
+                    truth = createTruth(question);
+                }
+                matchingTruths.push(truth);
+            }
         }
     }
+
+    matchingTruths.sort(function (a, b) { return b.score() - a.score(); });
 
     if (partnerQuestion) {
         question = partnerQuestion;
@@ -135,6 +142,29 @@ function truthCountNaughty(answer) {
     return words ? words.length : 0;
 }
 
+function getBaseWordScores() {
+    if (TRUTHS.length == TRUTH_BASEWORDCACHE.count) {
+        return TRUTH_BASEWORDCACHE.cache;
+    }
+
+    var result = {};
+
+    for (var i = 0; i < TRUTHS.length; i++) {
+        var words = new Set(TRUTHS[i].getWords());
+        for (let word of words) {
+            if (!result[word]) {
+                result[word] = 1;
+            }
+            result[word] *= 0.05;
+        }
+    }
+    
+    TRUTH_BASEWORDCACHE.cache = result;
+    TRUTH_BASEWORDCACHE.count = TRUTHS.length;
+
+    return result;
+}
+
 function createTruth(question, answer, partnerMentioned, naughtyWords) {
     return {
         question: question,
@@ -144,8 +174,12 @@ function createTruth(question, answer, partnerMentioned, naughtyWords) {
         naughtyWords: naughtyWords || truthCountNaughty(answer),
         answered: Date.now(),
 
+        getWords: function () {
+            return this.answer.toLowerCase().match(/\b(\w|')+\b/g);
+        },
+
         addWordCounts: function(counts) {
-            var words = this.answer.toLowerCase().match(/\b(\w|')+\b/g);
+            var words = this.getWords();
             for (var i = 0; i < words.length; i++) {
                 counts[words[i]] = (counts[words[i]] || 0) + 1;
             }
@@ -153,6 +187,33 @@ function createTruth(question, answer, partnerMentioned, naughtyWords) {
 
         toString: function () {
             return JSON.stringify(this);
+        },
+
+        cachedScoreTruthsCount: -1,
+        cachedScore: 0,
+
+        score: function () {
+            // Larger is better
+            if (TRUTHS.length == this.cachedScoreTruthsCount) {
+                return this.cachedScore;
+            }
+            this.cachedScoreTruthsCount = TRUTHS.length;
+
+            var words = new Set(this.question.replace(/%.*?%/g, '').toLowerCase().match(/\b(\w|')+\b/g));
+
+            var wordScores = getBaseWordScores();
+
+            var total = 0;
+            for (let word of words) {
+                total += wordScores[word] || 1;
+            }
+
+            var result = total / words.size;
+
+            this.cachedScoreTruthsCount = TRUTHS.length;
+            this.cachedScore = result;
+
+            return result;
         },
 
         fromString: function (string) {
