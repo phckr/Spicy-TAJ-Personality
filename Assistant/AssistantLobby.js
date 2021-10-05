@@ -145,7 +145,6 @@ function checkCamera() {
 }
 
 function startSession() {
-
     if (!isVar(VARIABLE.LAST_TEASE_SESSION) || getDate(VARIABLE.LAST_TEASE_SESSION).clone().addHour(16).hasPassed()) {
         if (getVar(VARIABLE.PUNISHMENT_POINTS) > getPunishmentPointsBadThreshold()) {
             sendVirtualAssistantMessage("Session denied %SlaveName%");

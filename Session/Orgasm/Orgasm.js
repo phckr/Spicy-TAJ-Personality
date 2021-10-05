@@ -122,7 +122,7 @@ function decideOrgasm(noDenied = false) {
         decide -= getVar(VARIABLE.ANGER);
     }
 
-    if(getVar(VARIABLE.LUST) > 27) {
+    if(getVar(VARIABLE.LUST) >= getHighMoodAttributeThreshold(1)) {
         decide += getVar(VARIABLE.LUST);
     }
 
@@ -134,9 +134,9 @@ function decideOrgasm(noDenied = false) {
             //First personality
             35,
             //Second personality
-            65,
+            50,
             //Third personality
-            100,
+            60,
         ];
 
         incrementVar(VARIABLE.ORGASM_RATION, -ratioArray[getStrictnessForCharacter()]);
@@ -149,11 +149,11 @@ function decideOrgasm(noDenied = false) {
     } else if(decide >= 80 || noDenied) {
         let ratioArray = [
             //First personality
-            9,
+            35,
             //Second personality
-            8,
+            25,
             //Third personality
-            6,
+            15,
         ];
 
         incrementVar(VARIABLE.ORGASM_RATION, ratioArray[getStrictnessForCharacter()]);
@@ -209,7 +209,7 @@ function distributeOrgasmPoints() {
     }
 
     //Bonus for lust high
-    if(getVar(VARIABLE.LUST) > 28) {
+    if(getVar(VARIABLE.LUST) >= getHighMoodAttributeThreshold(1)) {
         sendDebugMessage('Bonus points for high lust');
         totalToAdd += randomInteger(points[personalityOffset + lustOffset], points[personalityOffset + lustOffset + 1]);
     }
@@ -364,6 +364,7 @@ function askAboutDenialLevel() {
             if(getVar(VARIABLE.DENIAL_LEVEL) < 15) {
                 if(isChance(chancesIncrease[Math.min(denialLevelIndex, chancesIncrease.length - 1)])) {
                     incrementVar(VARIABLE.DENIAL_LEVEL, 1);
+                    sendDebugMessage('"Randomly" increased denial level to ' + getVar(VARIABLE.DENIAL_LEVEL, 0));
                 }
             }
 

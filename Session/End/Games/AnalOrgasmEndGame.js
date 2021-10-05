@@ -2,6 +2,8 @@
     let endGame = registerEndGame(END_GAME_ANAL_ORGASM);
     endGame.run = function () {
         //Double the points
+
+        //TODO: Restore session time and these lines!
         distributeOrgasmPoints();
         distributeOrgasmPoints();
 
@@ -155,7 +157,7 @@
             sendMessage('You should stroke other people\'s cocks instead');
             sendMessage('You don\'t deserve that kind of pleasure anyway');
             sendMessage('You aren\'t on par with all these alpha men that can stroke to orgasm');
-            sendMessage('And therefor that needs to be reflected in your life as well');
+            sendMessage('And therefore that needs to be reflected in your life as well');
             sendMessage('You can\'t even grasp the right to stroke your cock to an orgasm');
             sendMessage('It\'s simply out of reach for you and that\'s just as it should be');
         }
@@ -176,9 +178,11 @@
 
         if(sendYesOrNoQuestion('Have you ever had an anal orgasm?')) {
             sendMessage('Now that\'s what I wanted to hear %Wicked%');
+            setVar(VARIABLE.ANAL_ORGASMS_COUNT, 1);
         } else {
             sendMessage('Well then I guess we got ourselves some work on our hands');
             setVar(VARIABLE.ANAL_ORGASM_TRAINING, true);
+            setVar(VARIABLE.ANAL_ORGASMS_COUNT, 0);
             sendMessage('Which means for now you can consider yourself lucky');
             sendMessage('I will not enforce this orgasm rule on you yet');
             sendMessage('But you probably won\'t like what I\'ll come up with later either %Grin%');

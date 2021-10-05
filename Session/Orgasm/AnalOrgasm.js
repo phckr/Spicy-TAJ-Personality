@@ -30,13 +30,16 @@ function getAnalOrgasmInstructions(analOrgasmType, orgasmCategory) {
     let action = orgasmCategory === ORGASM_CATEGORY_RUINED? 'ruin your orgasm' : 'cum';
 
     if(hasSomeLingerie()) {
-        sendMessage('First of all let\'s get you dressed properly for the occasion sissy %Grin%');
-        sendMessage('Which means I want to see you in everything you got');
-        sendMessage('Put on heels, stockings, garter belt, panties, bra, a fitting top, skirt');
-        sendMessage('Makeup if you got some');
-        sendMessage('Get creative with what you got and go all out');
-        sendMessage('Tell me when you are done %EmoteHappy%');
-        waitForDone(1000000);
+        //In 50 percent of the vibe orgasm we don't give the sub any prep so he is supprised by the orgasm
+        if(analOrgasmType !== ANAL_ORGASM_TYPE.CHASTITY_VIBE || isChance(50)) {
+            sendMessage('First of all let\'s get you dressed properly for the occasion sissy %Grin%');
+            sendMessage('Which means I want to see you in everything you got');
+            sendMessage('Put on heels, stockings, garter belt, panties, bra, a fitting top, skirt');
+            sendMessage('Makeup if you got some');
+            sendMessage('Get creative with what you got and go all out');
+            sendMessage('Tell me when you are done %EmoteHappy%');
+            waitForDone(1000000);
+        }
     }
 
     if(analOrgasmType === ANAL_ORGASM_TYPE.DILDO) {
@@ -47,7 +50,7 @@ function getAnalOrgasmInstructions(analOrgasmType, orgasmCategory) {
 
         if(feelsLikePunishingSlave()) {
             let bpm = random(30, 40, 45, 50);
-            sendMessage('And you will not be allowed to go lower than ' + bpm);
+            sendMessage('And you will not be allowed to go lower than ' + bpm + ' bpm');
             sendMessage('If you go lower than that it\'s game over and a forfeited orgasm %Grin%');
         }
 

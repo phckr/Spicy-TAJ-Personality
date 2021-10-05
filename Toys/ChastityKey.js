@@ -6,33 +6,41 @@ function lockAwayChastityKey() {
         chastityCombinationImagesFolder.mkdirs();
 
         sendVirtualAssistantMessage('Go ahead and fetch your combination lock and some casket you can lock with it %Grin%');
-        sendVirtualAssistantMessage('Go ahead and put the keys for the %ChastityCage% inside the casket');
-        sendVirtualAssistantMessage('Next you will go ahead and set a new code for your combination lock at random. You will not look at it');
-        if (canUseCamera()) {
-            sendVirtualAssistantMessage('Instead you will show it to me via your webcam');
+        //Only do this 5 times
+        if(getVar(VARIABLE.CHASTITY_COMBINATION_LOCK_EXPLAINED, 0) < 7) {
+	  sendVirtualAssistantMessage('Go ahead and put the keys for the %ChastityCage% inside the casket');
+	  sendVirtualAssistantMessage('Next you will go ahead and set a new code for your combination lock at random. You will not look at it');
+	  if (canUseCamera()) {
+	      sendVirtualAssistantMessage('Instead you will show it to me via your webcam');
+	  } else {
+	      sendVirtualAssistantMessage('Instead you will take your phone or a camera and you will take a picture of the new combination');
+	  }
+	  sendVirtualAssistantMessage('Don\'t you dare look at the combination in any way');
+	  sendVirtualAssistantMessage('After that I want you to lock the casket with the combination lock and randomize the selected combination so you won\'t be able to unlock it anymore');
+          if (!canUseCamera()) {
+	      sendVirtualAssistantMessage('Then you will take the picture and place it inside the "Images/Spicy/Chastity/ChastityCombination" folder and make sure there is only one file inside that folder');
+          }
         } else {
-            sendVirtualAssistantMessage('Instead you will take your phone or a camera and you will take a picture of the new combination');
+          sendVirtualAssistantMessage('You know the drill by now');
         }
-        sendVirtualAssistantMessage('Don\'t you dare look at the combination in any way');
-        sendVirtualAssistantMessage('After that I want you to lock the casket with the combination lock and randomize the selected combination so you won\'t be able to unlock it anymore');
-        if (canUseCamera()) {
-            var filesArray = chastityCombinationImagesFolder.listFiles();
-            for (var i = 0; i < filesArray.length; i++) {
-                filesArray[i].delete();
-            }
-            tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination", { maskPercent: 30});
-            sendVirtualAssistantMessage('%Good%');
-        } else {
-            sendVirtualAssistantMessage('Then you will take the picture and place it inside the "Images/Spicy/Chastity/ChastityCombination" folder and make sure there is only one file inside that folder');
+ 
+	if (canUseCamera()) {
+	    var filesArray = chastityCombinationImagesFolder.listFiles();
+	    for (var i = 0; i < filesArray.length; i++) {
+		filesArray[i].delete();
+	    }
+	    tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination", { maskPercent: 30});
+	    sendVirtualAssistantMessage('%Good%');
+	} else {
 
-            let port = 8080;
-            let path = 'Images' + PATH_SEPARATOR + 'Spicy' + PATH_SEPARATOR + 'Chastity' + PATH_SEPARATOR + 'ChastityCombination' + PATH_SEPARATOR;
-            let server = createHTTPServer(port, path);
+	    let port = 8080;
+	    let path = 'Images' + PATH_SEPARATOR + 'Spicy' + PATH_SEPARATOR + 'Chastity' + PATH_SEPARATOR + 'ChastityCombination' + PATH_SEPARATOR;
+	    let server = createHTTPServer(port, path);
 
-            sendVirtualAssistantMessage('You can alternatively open the following page on your mobile device ' + java.net.InetAddress.getLocalHost().getHostAddress() + ':' + port + '/uploadCh.html');
+	    sendVirtualAssistantMessage('You can alternatively open the following page on your mobile device ' + java.net.InetAddress.getLocalHost().getHostAddress() + ':' + port + '/uploadCh.html');
 
-            sendVirtualAssistantMessage('Tell me when you have done all of that');
-            waitForDoneVirtualAssistant();
+	    sendVirtualAssistantMessage('Tell me when you have done all of that');
+	    waitForDoneVirtualAssistant();
 
             server.stop(0);
 
@@ -65,6 +73,7 @@ function lockAwayChastityKey() {
         setVar(VARIABLE.CHASTITY_KEY_LOCKED_COMBINATION, true);
 
         sendVirtualAssistantMessage('You can request me to tell you the chastity combination in the main menu');
+        incrementVar(VARIABLE.CHASTITY_COMBINATION_LOCK_EXPLAINED, 1);
     }
 }
 

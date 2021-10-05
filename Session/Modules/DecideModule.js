@@ -26,7 +26,7 @@ function decideModule() {
         let minTimePassed = 0;
 
         //Dom choose
-        if (strokeFrequency == 0) {
+        if (strokeFrequency === 0) {
             const mood = getMood();
             const strictness = getStrictnessForCharacter();
 
@@ -78,7 +78,7 @@ function decideModule() {
         }
 
         let skipModules = false;
-        if (moduleCounter === 0) {
+        if (moduleCounter === 0 && !hasSessionTimePassed(getVar(VARIABLE.DEVOTION))) {
             //Continue special session (if session ended early)
             if (isVar(VARIABLE.CURRENT_SPECIAL_SESSION)) {
                 let specialSession = getSpecialSessionById(getVar(VARIABLE.CURRENT_SPECIAL_SESSION));
@@ -161,8 +161,9 @@ function decideModule() {
                 teaseModuleChance -= 10;
             }
 
-            if (getVar(VARIABLE.ANGER) > 25) {
+            if (getVar(VARIABLE.ANGER) >= getHighMoodAttributeThreshold(0.7)) {
                 teaseModuleChance -= 10;
+                sendDebugMessage('Anger high, reducing tease chance');
             }
 
             //Don't go below zero

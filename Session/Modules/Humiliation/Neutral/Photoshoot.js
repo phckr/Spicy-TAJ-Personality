@@ -150,7 +150,7 @@
             }
         }
 
-        if (getVar(VARIABLE.LUST) > 20) {
+        if (getVar(VARIABLE.LUST) >= getHighMoodAttributeThreshold(0.9)) {
             if (isChance(50)) {
                 sendMessage("I want to show you a video!");
                 sendMessage("Enjoy!");
