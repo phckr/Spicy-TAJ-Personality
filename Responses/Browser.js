@@ -1,24 +1,24 @@
-addResponseRegex("^taj-posenet-data");
+addResponseRegex("^tj-browser-data");
 setResponseIgnoreDisabled(true);
 
-let posenet_result = null;
-let posenet_image_requests = {};
-let posenet_video_requests = {};
-let posenetMotionDetected = null;
-let posenet_last_message = null;
-let posenetOnClick = {};
+let browser_result = null;
+let browser_image_requests = {};
+let browser_video_requests = {};
+let browserMotionDetected = null;
+let browser_last_message = null;
+let browserOnClick = {};
 
-function posenetResponse(message, answers) {
+function browserResponse(message, answers) {
     for (var i = 0; i < answers.length; i++) {
-        posenetResponseInner(answers[i]);
+        browserResponseInner(answers[i]);
     }
 }
 
-function posenetResponseInner(message) {
+function browserResponseInner(message) {
     var result = JSON.parse(message.substring(17));
     result.when = Date.now();
-    posenet_last_message = result;
-    sendDebugMessage("Posenet latency = " + (result.when - result.captured) + "ms for " + Object.keys(result));
+    browser_last_message = result;
+    sendDebugMessage("browser latency = " + (result.when - result.captured) + "ms for " + Object.keys(result));
     if (result.command) {
         sendDebugMessage("Command: " + JSON.stringify(result));
         if (result.command == "vocab") {
@@ -27,27 +27,27 @@ function posenetResponseInner(message) {
     }
 
     if (result.position) {
-        sendDebugMessage("Posenet: " + JSON.stringify(result.position));
-        const previous = posenet_result;
-        posenet_result = result;
-        setTimeout(function () { if (posenetMotionDetected) { posenetMotionDetected(result.position.motion); } }, 0);
+        sendDebugMessage("browser: " + JSON.stringify(result.position));
+        const previous = browser_result;
+        browser_result = result;
+        setTimeout(function () { if (browserMotionDetected) { browserMotionDetected(result.position.motion); } }, 0);
         setTimeout(function () {
-            sendDebugMessage("Posenet callback latency = " + (Date.now() - result.when) + "ms");
+            sendDebugMessage("browser callback latency = " + (Date.now() - result.when) + "ms");
             positionMonitor.update(result);
         }, 0);
         if (!previous || JSON.stringify(result.position) != JSON.stringify(previous.position)) {
             // positionChange.change(result.position, result);
         }
-        sendDebugMessage("Posenet handling latency = " + (Date.now() - result.when) + "ms");
+        sendDebugMessage("browser handling latency = " + (Date.now() - result.when) + "ms");
     }
 
     if (result.images) {
         var imgs = result.images;
         for (var i = 0; i < imgs.length; i++) {
             sendDebugMessage("Handling photo " + imgs[i].name);
-            if (posenet_image_requests[imgs[i].name]) {
-                posenet_image_requests[imgs[i].name](imgs[i].value);
-                delete posenet_image_requests[imgs[i].name];
+            if (browser_image_requests[imgs[i].name]) {
+                browser_image_requests[imgs[i].name](imgs[i].value);
+                delete browser_image_requests[imgs[i].name];
             }
         }
     }
@@ -56,15 +56,15 @@ function posenetResponseInner(message) {
         var vids = result.videos;
         for (var i = 0; i < vids.length; i++) {
             sendDebugMessage("Handling video " + vids[i].name);
-            if (posenet_video_requests[vids[i].name]) {
-                posenet_video_requests[vids[i].name](vids[i].value);
+            if (browser_video_requests[vids[i].name]) {
+                browser_video_requests[vids[i].name](vids[i].value);
             }
         }
     }
 
     if (result.click) {
         sendDebugMessage("Handling click for " + result.dialog);
-        var handler = posenetOnClick[result.dialog];
+        var handler = browserOnClick[result.dialog];
         if (handler) {
             handler(result.click, result.args);
         } else {
@@ -74,7 +74,7 @@ function posenetResponseInner(message) {
 }
 
 function setPhotoMotionDetect(detected) {
-    posenetMotionDetected = detected;
+    browserMotionDetected = detected;
     if (!detected) {
         sendWebControlJson(JSON.stringify({ motion: false }));
         return;
@@ -220,19 +220,19 @@ function writeSubPhotoToFile(data, filePath) {
 
 function takeSubPhoto(done) {
     var name = Math.random().toString(36);
-    posenet_image_requests[name] = done;
+    browser_image_requests[name] = done;
     sendWebControlJson(JSON.stringify({ photo: name }));
 }
 
 function handlePasteSubPhoto(done) {
     var name = Math.random().toString(36);
-    posenet_image_requests[name] = done;
+    browser_image_requests[name] = done;
     sendWebControlJson(JSON.stringify({ photopaste: name }));
 }
 
 function takeSubVideo(done, duration) {
     var name = Math.random().toString(36);
-    posenet_video_requests[name] = done;
+    browser_video_requests[name] = done;
     var command = { video: name };
     if (typeof duration == "function") {
         command.duration = duration;
@@ -241,25 +241,25 @@ function takeSubVideo(done, duration) {
 }
 
 function canUseCamera() {
-    return getRecentPosenetResult() != null;
+    return getRecentBrowserResult() != null;
 }
 
-function getRecentPosenetResult() {
-    if (posenet_result && Date.now() - posenet_result.when < 15000) {
-        return posenet_result;
+function getRecentBrowserResult() {
+    if (browser_result && Date.now() - browser_result.when < 15000) {
+        return browser_result;
     }
     return null;
 }
 
 function isBrowserConnected() {
-    if (posenet_last_message && Date.now() - posenet_last_message.when < 15000) {
+    if (browser_last_message && Date.now() - browser_last_message.when < 15000) {
         return true;
     }
     return false;
 }
 
 function getSubPosition() {
-    const result = getRecentPosenetResult();
+    const result = getRecentBrowserResult();
     if (result) {
         return result.position;
     }
@@ -271,8 +271,8 @@ function getSubPresent() {
     return pos && pos.present;
 }
 
-function getPosenetResult() {
-    return posenet_result;
+function getBrowserResult() {
+    return browser_result;
 }
 
 function PositionChange() {
@@ -318,7 +318,7 @@ PositionMonitor.prototype = {
         }
         this.unsubscribe(fn);
         this.handlers.push({ "f": fn, "thisObj": thisObj });
-        var recent = getRecentPosenetResult();
+        var recent = getRecentBrowserResult();
         if (recent) {
             fn.call(thisObj, recent);
         }
@@ -384,7 +384,7 @@ function cancelTimeout(runnable) {
 }
 
 function registerOnClick(selector, callback) {
-    posenetOnClick[selector] = callback;
+    browserOnClick[selector] = callback;
 }
 
 var positionMonitor = new PositionMonitor();
