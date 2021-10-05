@@ -1,7 +1,7 @@
 //TODO: Pain Modules: Sounding
 
 if (typeof sessionTheme == "undefined") {
-    let sessionTheme = pickTheme() || { run: function () { } };
+    sessionTheme = pickTheme() || { run: function () { } };
 }
 
 function decideModule() {
