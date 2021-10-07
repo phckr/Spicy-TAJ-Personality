@@ -1,4 +1,4 @@
-addResponseRegex("^tj-browser-data");
+addResponseRegex("^taj-browser-data");
 setResponseIgnoreDisabled(true);
 
 let browser_result = null;
@@ -7,10 +7,13 @@ let browser_video_requests = {};
 let browserMotionDetected = null;
 let browser_last_message = null;
 let browserOnClick = {};
+let bluetooth_requests = {};
 
 function browserResponse(message, answers) {
     for (var i = 0; i < answers.length; i++) {
+        //sendDebugMessage("About to process: " + answers[i].substring(17, 50));
         browserResponseInner(answers[i]);
+        //sendDebugMessage("Done processing: " + answers[i].substring(17, 50));
     }
 }
 
@@ -69,6 +72,15 @@ function browserResponseInner(message) {
             handler(result.click, result.args);
         } else {
             sendDebugMessage("Unable to find handler for " + result.dialog);
+        }
+    }
+
+    if (result.bluetooth) {
+        var handler = bluetooth_requests[result.name];
+        if (handler) {
+            handler(result.bluetooth);
+        } else {
+            sendDebugMessage("Unable to find bluetooth handler for " + result.name);
         }
     }
 }
@@ -140,7 +152,7 @@ function tryTakePhoto(prompt, pathname, options) {
     var flag = { complete: false };
     var command = { largeCamera: true };
     if (options) {
-        comand.maskPercent = options.maskPercent;
+        command.maskPercent = options.maskPercent;
     }
     sendWebControlJson(JSON.stringify(command));
 
@@ -191,12 +203,21 @@ function writeSubVideoToFile(data, filePath) {
         }
         filePath = filePath + "." + imageType;
         sendDebugMessage("About to write video chunk to " + filePath);
+        ensureFolderForFileExists(filePath);
         let stream = new java.io.FileOutputStream(filePath, true);
         stream.write(binaryData);
         stream.close();
     }
 
     return filePath;
+}
+
+function ensureFolderForFileExists(filePath) {
+    let folder = new java.io.File(filePath).getParentFile();
+
+    if (!folder.exists()) {
+        folder.mkdirs();
+    }
 }
 
 function writeSubPhotoToFile(data, filePath) {
@@ -211,6 +232,7 @@ function writeSubPhotoToFile(data, filePath) {
     }
     filePath = filePath + "." + imageType;
     sendDebugMessage("About to write photo to " + filePath);
+    ensureFolderForFileExists(filePath);
     let stream = new java.io.FileOutputStream(filePath);
     stream.write(binaryData);
     stream.close();
@@ -238,6 +260,12 @@ function takeSubVideo(done, duration) {
         command.duration = duration;
     }
     sendWebControlJson(JSON.stringify(command));
+}
+
+function bluetoothStartScanning(done) {
+    var name = Math.random().toString(36);
+    sendWebControlJson(JSON.stringify({bluetooth: { startScanning: 1 }, name: name}));
+    bluetooth_requests[name] = done;
 }
 
 function canUseCamera() {
@@ -296,7 +324,7 @@ PositionChange.prototype = {
     },
 
     change: function (pos, res, thisObj) {
-        sendDebugMessage("Notifying " + JSON.stringify(pos) + " to observers");
+        //sendDebugMessage("Notifying " + JSON.stringify(pos) + " to observers");
         var scope = thisObj || null;
         this.handlers.forEach(function (item) {
             item.call(scope, pos, res);
@@ -345,7 +373,7 @@ PositionMonitor.prototype = {
         while (true) {
             const thisSerial = this.serial;
             const pos = res ? res.position : null;
-            sendDebugMessage("Notifying " + JSON.stringify(pos) + " to observers -- serial " + thisSerial);
+            //sendDebugMessage("Notifying " + JSON.stringify(pos) + " to observers -- serial " + thisSerial);
             const thisItem = this;
             this.handlers.forEach(function (item) {
                 if (thisItem.serial == thisSerial) {
@@ -356,7 +384,7 @@ PositionMonitor.prototype = {
                     sendDebugMessage("Not notifying due to serial difference: " + thisItem.serial + " != " + thisSerial);
                 }
             });
-            sendDebugMessage("Notified observers -- serial " + thisSerial + " (currently " + this.serial + ")");
+            //sendDebugMessage("Notified observers -- serial " + thisSerial + " (currently " + this.serial + ")");
             if (!this.notify) {
                 break;
             }

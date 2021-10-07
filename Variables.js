@@ -243,6 +243,12 @@ const VARIABLE = {
 
     LAST_DILDO_SWAP_DATE: "lastDildoSwapDate",
 
+    //Bluetooth
+    HAS_BLUETOOTH_TOYS: "hasBluetoothToy",
+    BLUETOOTH_ON: "bluetoothOn",
+
+    ACTIVE_BLUETOOTH_TOY: "activeBluetoothToy",
+
 
     //E-Stim
     E_STIM_MODES: 'eStimModes',

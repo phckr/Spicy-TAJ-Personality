@@ -29,7 +29,7 @@ function taggerTagRandomPicturesWaitUntil(constraint) {
     taggerTagRandomPicturesUntil(constraint, function() { done.done = 1; });
 
     while (!done.done) {
-        wait(200);
+        wait(0.2);
     }
 }
 

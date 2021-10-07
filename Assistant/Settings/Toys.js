@@ -1,7 +1,9 @@
 {
     sendVirtualAssistantMessage('Toy Settings Menu:', 0);
 
-    let lobbyAnswer = createInput("Add new dildo", 'Edit dildos', 'Add new buttplug', 'Edit buttplugs', 'Add new chastity cage', 'Edit chastity cages',  'Clothing', 'E-Stim', 'Setup Other Toys', 'Return');
+    let lobbyAnswer = createInput("Add new dildo", 'Edit dildos', 'Add new buttplug', 'Edit buttplugs', 
+    'Add new chastity cage', 'Edit chastity cages', 'Add new Bluetooth toy', 'Edit Bluetooth toys',
+    'Clothing', 'E-Stim', 'Setup Other Toys', 'Return');
     while (true) {
         if (lobbyAnswer.isLike("new dildo", "add dildo")) {
             lobbyAnswer.clearOptions();
@@ -34,6 +36,17 @@
         } else if (lobbyAnswer.isLike("edit cage", "modify cage", "edit chastity", "modify chastity")) {
             lobbyAnswer.clearOptions();
             openChastityCageList();
+            run('Assistant/Settings/Toys.js');
+            break;
+        } else if (lobbyAnswer.isLike("new bluetooth", "add bluetooth")) {
+            lobbyAnswer.clearOptions();
+            sendVirtualAssistantMessage('Bought a new bluetooth toy? How exciting! %Grin%');
+            setupNewBluetoothToy();
+            run('Assistant/Settings/Toys.js');
+            break;
+        } else if (lobbyAnswer.isLike("edit bluetooth", "modify bluetooth")) {
+            lobbyAnswer.clearOptions();
+            openBluetoothToyList();
             run('Assistant/Settings/Toys.js');
             break;
         } else if (lobbyAnswer.isLike("clothing", 'clothes')) {
