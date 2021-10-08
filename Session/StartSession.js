@@ -10,8 +10,6 @@
     updateSessionButtplugs();
     updateSessionDildos();
 
-    loadTruths();
-
     //TODO: Special day test (birthday etc.)
 
     if (!sendGreeting()) {

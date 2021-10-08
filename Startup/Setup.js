@@ -388,7 +388,7 @@
         setVar(VARIABLE.HAS_CHASTITY, true);
 
         if(CHASTITY_CAGES.length > 0) {
-            sendVirtualAssistantMessage('Since you already have chastity cages setup, we are not gonna setup any additional cages now. You can always add new cages in the main menu.');
+            sendVirtualAssistantMessage('Since you already have chastity cages setup, we are not gonna setup any additional cages now. You can always add new cages in the settings menu.');
         } else {
             sendVirtualAssistantMessage('Okay %SlaveName%. Tell me, how many different chastity cages do you have?', false);
             answer = createInput();
@@ -467,6 +467,46 @@
         setVar(VARIABLE.HAS_CHASTITY, false);
         sendVirtualAssistantMessage("%EmoteSad%");
         sendVirtualAssistantMessage('You should consider getting one for the full experience %Grin%');
+    }
+
+    setVar(VARIABLE.CHASTITY_ON, false);
+
+    if (sendYesOrNoQuestion("Do you own any bluetooth connected toys?", SENDER_ASSISTANT)) {
+        setVar(VARIABLE.HAS_BLUETOOTH_TOYS, true);
+
+        if(BLUETOOTH_TOYS.length > 0) {
+            sendVirtualAssistantMessage('Since you already have bluetooth toys setup, we are not gonna setup any additional toys now. You can always add new toys in the settings menu.');
+        } else {
+            sendVirtualAssistantMessage('Okay %SlaveName%. Tell me, how many different bluetooth toys do you have?', false);
+            answer = createInput();
+
+            while (true) {
+                if (answer.isInteger()) {
+                    const result = answer.getInt();
+                    if (result <= 0) {
+                        sendVirtualAssistantMessage("You can't choose a number equal to 0 or lower", 0);
+                        answer.loop();
+                    } else {
+                        sendVirtualAssistantMessage('We are gonna setup your bluetooth toys now, one by one.');
+
+                        for (let x = 0; x < result; x++) {
+                            setupNewBluetoothToy();
+                        }
+
+                        sendVirtualAssistantMessage('This should do it regarding bluetooth toys');
+                        sendVirtualAssistantMessage('You can always setup new bluetooth toys in the settings menu');
+                        break;
+                    }
+                } else {
+                    sendVirtualAssistantMessage("Please only enter a number such as 1 now.", 0);
+                    answer.loop();
+                }
+            }
+        }
+    } else {
+        setVar(VARIABLE.HAS_BLUETOOTH_TOYS, false);
+        sendVirtualAssistantMessage("%EmoteSad%");
+        sendVirtualAssistantMessage('You should consider getting at least one for the full experience %Grin%');
     }
 
     setVar(VARIABLE.CHASTITY_ON, false);

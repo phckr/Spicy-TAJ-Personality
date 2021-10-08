@@ -271,7 +271,9 @@ function truthGetRandomPartnerMention() {
 
 function truthAskQuestions(partnerMention) {
     if (getVar("truthSessionIndex", 0) == 0) {
-        sendMessage(random("I %Want% to get to know you a bit better %SubName%", "I %Want% to know more about you."));
+        sendMessage(random("I %Want% to explore your secrets.", 
+                           "I %Want% to get to know you a bit better %SubName%", 
+                           "I %Want% to know more about you."));
         if (TRUTHS.length > 0) {
             sendMessage("You know how this goes from before");
             sendMessage("Just a quick reminder");
@@ -279,7 +281,8 @@ function truthAskQuestions(partnerMention) {
             sendMessage(random("That way I'll be able to have more fun with pushing your limits.", "It will be useful in planning our sessions."));
         }
         sendMessage(random("I'm going to ask you some questions, and I %Want% long, honest, explicit answers %SubName%", 
-                           "I %Want% full, detailed, honest and explicit answers to my questions."));
+                           "I %Want% full, detailed, honest and explicit answers to my questions.",
+                           "I %Want% you to reveal your dirtiest secrets to me in explicit detail."));
         sendMessage(random("Even if it is a yes/no question, you should explain yourself fully.", 
                            "If it is a yes / no question then please go into detail about why you feel that way %SubName%"));
     }
@@ -291,3 +294,5 @@ function truthAskQuestions(partnerMention) {
     
     setTempVar("truthSessionIndex", getVar("truthSessionIndex", 0) + 1);
 }
+
+loadTruths();
