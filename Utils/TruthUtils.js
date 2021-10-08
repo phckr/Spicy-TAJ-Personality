@@ -3,7 +3,7 @@ const TRUTHS = [];
 const TRUTH_NAUGHTY_WORDS = [
     "fuck", "suck", "lick", "wank", "masturb", "cum", "spank", "fondle", "punish",
     "pee", "jizz",
-    "puss[iy]", "cunt", "clit", "cock", "dick", "penis", "ball", "oral", "anal", "ass\\b", "breast", 
+    "puss[iy]", "cunt", "clit", "cock", "dick", "penis", "ball", "oral", "anal", "ass\\b", "breast", "vulva", "vagina",
     "boob", "nipple", "tit(s)?\\b", "mouth", "anus", "knees", "tongue", "face",
     "gag", "panty", "chastity", "lingerie", "panti", "stockings", "bra\\b", "corset", "boots",
     "bdsm", "bondage", "domina", "submiss", "blowjob", "bj\\b", 

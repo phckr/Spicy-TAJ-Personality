@@ -104,6 +104,9 @@ function setupNewBluetoothToy() {
     var deviceData;
 
     for (var loop = 0; loop < 2; loop++) {
+        if (loop > 0) {
+            sendVirtualAssistantMessage("I don't see your toy. Please try again.");
+        }
         sendVirtualAssistantMessage("Turn on your toy, and tell me when that is done. Then you can pair it in the popup.");
 
         var done = {};
@@ -122,10 +125,11 @@ function setupNewBluetoothToy() {
             wait(0.2);
         }
 
-        if (deviceData) {
+        if (deviceData && deviceData.allowedMessages && deviceData.device) {
+            console.log("deviceData = " + JSON.stringify(deviceData));
             break;
         }
-        sendVirtualAssistantMessage("I don't see your toy. Please try again.");
+        deviceData = null;
     }
 
     if (!deviceData) {
@@ -133,7 +137,7 @@ function setupNewBluetoothToy() {
         return;
     }
 
-    sendVirtualAssistantMessage('What sort of toy is this? Cock ring, Butt plug, Stroker, Wand, or Fucking Machine');
+    sendVirtualAssistantMessage('What sort of toy is ' + name + '(' + deviceData.device + ')? Cock ring, Butt plug, Stroker, Wand, or Fucking Machine');
     let options = ["Cock ring", "Butt plug", "Stroker", "Wand", "Fucking machine"];
 
     answer = createAnswerInput(options);
@@ -185,7 +189,7 @@ function setupNewBluetoothToy() {
 }
 
 
-function createBluetoothToy(name, toyType, deviceName, canVibrate, canRotate, canLinear, canBatteryLevel) {
+function createBluetoothToy(name, toyType, deviceName, vibrate, rotate, linear, batteryLevel) {
     return {
         name: name,
         toyType: toyType,

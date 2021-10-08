@@ -79,6 +79,7 @@ function browserResponseInner(message) {
         var handler = bluetooth_requests[result.name];
         if (handler) {
             handler(result.bluetooth);
+            delete bluetooth_requests[result.name];
         } else {
             sendDebugMessage("Unable to find bluetooth handler for " + result.name);
         }
@@ -221,6 +222,9 @@ function ensureFolderForFileExists(filePath) {
 }
 
 function writeSubPhotoToFile(data, filePath) {
+    if (!data) {
+        return;
+    }
     let binaryData = java.util.Base64.getMimeDecoder().decode(data.split('base64,')[1]);
     let imageType = data.substring(11, 100);
     imageType = imageType.split(";")[0];
