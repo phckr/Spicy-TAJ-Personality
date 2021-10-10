@@ -388,6 +388,10 @@ function createToy(name) {
             return setTempVar(this.getVarName() + 'Used', used);
         },
 
+        getBluetoothToy: function() {
+            return getBluetoothToyByToy(this);
+        },
+
         isToyOn: function () {
             return getVar(this.getVarName() + 'on', false);
         },

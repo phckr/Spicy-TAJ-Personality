@@ -783,32 +783,39 @@ function getButtplugByName(name) {
     return null;
 }
 
-function setupNewButtplug() {
-    sendVirtualAssistantMessage('Please enter a name for your new buttplug', 0);
+function setupNewButtplug(forceName, imagePath, isBluetooth) {
+    let name = forceName;
+    if (!forceName) {
+        sendVirtualAssistantMessage('Please enter a name for your new buttplug', 0);
 
-    let answer = createInput();
-    let name = 'undefined';
+        let answer = createInput();
+        name = 'undefined';
 
-    while (true) {
-        if (getButtplugByName(answer.getAnswer()) != null) {
-            sendVirtualAssistantMessage('A buttplug with a similar name already exists. Please choose a different name.', 0);
-            answer.loop();
-        } else {
-            name = answer.getAnswer();
-            break;
+        while (true) {
+            if (getButtplugByName(answer.getAnswer()) != null) {
+                sendVirtualAssistantMessage('A buttplug with a similar name already exists. Please choose a different name.', 0);
+                answer.loop();
+            } else {
+                name = answer.getAnswer();
+                break;
+            }
         }
     }
 
-    if (canUseCamera() && tryTakePhoto("Hold your buttplug in front of the camera and tell me when you are ready (or just paste an image in).", getButtplugImagePath(name))) {
-      sendVirtualAssistantMessage('This is what I saw', false, true);
+    if (!imagePath) {
+        if (canUseCamera() && tryTakePhoto("Hold your buttplug in front of the camera and tell me when you are ready (or just paste an image in).", getButtplugImagePath(name))) {
+            sendVirtualAssistantMessage('This is what I saw', false, true);
+        } else {
+            sendVirtualAssistantMessage('Please make sure to add a picture of your buttplug named like your buttplug to your Toys/Buttplugs folder.', false);
+            sleep(2);
+            sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the buttplugs folder', false);
+            sleep(2);
+            sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+        }
+        showImage(getButtplugImagePath(name), 5);
     } else {
-      sendVirtualAssistantMessage('Please make sure to add a picture of your buttplug named like your buttplug to your Toys/Buttplugs folder.', false);
-      sleep(2);
-      sendVirtualAssistantMessage('So in this case make sure to add a picture called "' + name + '.jpg" to the buttplugs folder', false);
-      sleep(2);
-      sendVirtualAssistantMessage('If it already exists a picture of it should show up now', false, true);
+        copyFileToWildcard(imagePath, getButtplugImagePath(name));
     }
-    showImage(getButtplugImagePath(name), 5);
 
     sendVirtualAssistantMessage('Next please tell me the length of the buttplug in centimeters (measure everything that\'s insertable)', 0);
     answer = createInput();
@@ -927,6 +934,16 @@ function setupNewButtplug() {
 
     answer.clearOptions();
 
+    if (!isBluetooth) {
+        isBluetooth = false;
+    }
+
+    if (!isBluetooth && getBluetoothToyByTypeName(BLUETOOTH_TOY_TYPE.BUTT_PLUG, name)) {
+        if (sendYesOrNoQuestion('Is this the same buttplug as the bluetooth buttplug ' + name + '?')) {
+            isBluetooth = true;
+        }
+    }
+
     let textured = false;
     let vibrating = false;
     let hollow = false;
@@ -1017,7 +1034,7 @@ function setupNewButtplug() {
         }
     }
 
-    buttplugs.push(createButtplug(name, diameter, length, vibrating, textured, material, hollow, baseStyle, tbase));
+    buttplugs.push(createButtplug(name, diameter, length, vibrating, textured, material, hollow, baseStyle, tbase, isBluetooth));
 
     saveButtplugs();
     updatePlugMinAndMaxSizes();
@@ -1026,7 +1043,7 @@ function setupNewButtplug() {
     sendVirtualAssistantMessage('Enjoy %Grin%');
 }
 
-function createButtplug(name, diameter, length, vibrating, textured, material, hollow, baseStyle, tbase) {
+function createButtplug(name, diameter, length, vibrating, textured, material, hollow, baseStyle, tbase, bluetooth) {
     return {
         name: name,
         diameter: diameter,
@@ -1037,6 +1054,7 @@ function createButtplug(name, diameter, length, vibrating, textured, material, h
         hollow: hollow,
         baseStyle: baseStyle,
         tbase: tbase,
+        bluetooth: bluetooth,
 
         getImagePath: function () {
             return 'Images/Spicy/Toys/Buttplugs/' + this.name + '.*';
@@ -1053,6 +1071,13 @@ function createButtplug(name, diameter, length, vibrating, textured, material, h
         fromString: function (string) {
             return deserializeObject(this, string);
         },
+
+        getBluetoothToy: function () {
+            if (this.bluetooth) {
+                return getBluetoothToyByTypeName(BLUETOOTH_TOY_TYPE.BUTT_PLUG, this.name);
+            }
+            return;
+        }
     }
 }
 

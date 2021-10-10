@@ -10,8 +10,8 @@ const BLUETOOTH_TOY_TYPE = {
     WAND: 2,
     FUCKING_MACHINE: 3,
     STROKER: 4,
+    BULLET_VIBRATOR: 5,
 };
-
 
 function loadBluetoothToys() {
     //No var or no bluetooth toys anyway
@@ -56,6 +56,39 @@ function getBluetoothToyByName(name) {
     return null;
 }
 
+function getBluetoothToyByTypeName(toyType, name) {
+    for (let y = 0; y < BLUETOOTH_TOYS.length; y++) {
+        if (toyType == BLUETOOTH_TOYS[y].toyType &&
+            name.toUpperCase() === BLUETOOTH_TOYS[y].name.toUpperCase()) {
+            return BLUETOOTH_TOYS[y];
+        }
+    }
+
+    return null;
+}
+
+// This can get a toy for a specific type of single-item toy
+// e.g. MAGIC_WAND_TOY
+function getBluetoothToyByToy(toy) {
+    var toyType = -1;
+    if (toy == MAGIC_WAND_TOY) {
+        toyType = BLUETOOTH_TOY_TYPE.WAND;
+    }
+    if (toy == BULLET_VIBRATOR_TOY) {
+        toyType = BLUETOOTH_TOY_TYPE.BULLET_VIBRATOR;
+    }
+    
+    if (toyType >= 0) {
+        for (let y = 0; y < BLUETOOTH_TOYS.length; y++) {
+            if (toyType == BLUETOOTH_TOYS[y].toyType) {
+                return BLUETOOTH_TOYS[y];
+            }
+        }
+    }
+
+    return null;
+}
+
 function getBluetoothToyWithBool(attribute) {
     for (let y = 0; y < BLUETOOTH_TOYS.length; y++) {
         if (BLUETOOTH_TOYS[y][attribute]) {
@@ -75,7 +108,7 @@ function setupNewBluetoothToy() {
 
     setCurrentSender(SENDER_ASSISTANT);
 
-    sendVirtualAssistantMessage('Please enter a name for your new bluetooth enabled toy', 0);
+    sendVirtualAssistantMessage('Please enter a name for your new bluetooth enabled toy (use the same name if you have already set it up elsewhere).', 0);
 
     let answer = createInput();
     let name = 'undefined';
@@ -137,8 +170,8 @@ function setupNewBluetoothToy() {
         return;
     }
 
-    sendVirtualAssistantMessage('What sort of toy is ' + name + '(' + deviceData.device + ')? Cock ring, Butt plug, Stroker, Wand, or Fucking Machine');
-    let options = ["Cock ring", "Butt plug", "Stroker", "Wand", "Fucking machine"];
+    sendVirtualAssistantMessage('What sort of toy is ' + name + '(' + deviceData.device + ')? Cock ring, Butt plug, Stroker, Wand, Vibrator or Fucking Machine');
+    let options = ["Cock ring", "Butt plug", "Stroker", "Wand", "Vibrator", "Fucking machine"];
 
     answer = createAnswerInput(options);
 
@@ -159,6 +192,10 @@ function setupNewBluetoothToy() {
         }
         if (answer.isLike("wand")) {
             toyType = BLUETOOTH_TOY_TYPE.WAND;
+            break;
+        }
+        if (answer.isLike("vibrat")) {
+            toyType = BLUETOOTH_TOY_TYPE.BULLET_VIBRATOR;
             break;
         }
         if (answer.isLike("fuck")) {
@@ -184,8 +221,40 @@ function setupNewBluetoothToy() {
     setVar(VARIABLE.HAS_BLUETOOTH_TOYS, true);
     saveBluetoothToys();
 
-    sendVirtualAssistantMessage('Added your new bluetooth toy to %DomHonorific% %DomName%\'s collection');
-    sendVirtualAssistantMessage('Enjoy %Grin%');
+    var needToTellSub = true;
+
+    if (toyType == BLUETOOTH_TOY_TYPE.BUTT_PLUG) {
+        // See if it has already been setup as a buttplug
+        var other = getButtplugByName(name);
+        if (!other) {
+            sendVirtualAssistantMessage("Now you need to set this up as a buttplug as well");
+            setupNewButtplug(name, getBluetoothToyImagePath(name), true);
+            needToTellSub = false;
+        }
+    }
+
+    if (toyType == BLUETOOTH_TOY_TYPE.WAND) {
+        // Setup the WAND if not present
+        if (!MAGIC_WAND_TOY.hasToy()) {
+            // Well, they do have one
+            setVar(MAGIC_WAND_TOY.getVarName(), true);
+            MAGIC_WAND_TOY.askForToyUsage();
+        }
+    }
+
+    if (toyType == BLUETOOTH_TOY_TYPE.BULLET_VIBRATOR) {
+        // Setup the WAND if not present
+        if (!BULLET_VIBRATOR_TOY.hasToy()) {
+            // Well, they do have one
+            setVar(BULLET_VIBRATOR_TOY.getVarName(), true);
+            BULLET_VIBRATOR_TOY.askForToyUsage();
+        }
+    }
+
+    if (needToTellSub) {
+        sendVirtualAssistantMessage('Added your new bluetooth toy to %DomHonorific% %DomName%\'s collection');
+        sendVirtualAssistantMessage('Enjoy %Grin%');
+    }
 }
 
 

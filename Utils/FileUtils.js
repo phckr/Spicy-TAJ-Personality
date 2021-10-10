@@ -116,3 +116,14 @@ function getFileOrCreate(path) {
 function getFile(path) {
     return new java.io.File(path);
 }
+
+function copyFileToWildcard(source, destination) {
+    var sourceFile = TAJFileUtils.getRandomMatchingFile(source);
+    source = sourceFile.toString();
+
+    if (destination.endsWith(".*")) {
+        var dot = source.lastIndexOf(".");
+        destination = destination.slice(0, -2) + source.substring(dot);
+    }
+    copyFolder(sourceFile, getFile(destination));
+}
