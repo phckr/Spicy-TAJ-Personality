@@ -140,15 +140,17 @@ function setupNewBluetoothToy() {
         if (loop > 0) {
             sendVirtualAssistantMessage("I don't see your toy. Please try again.");
         }
-        sendVirtualAssistantMessage("Turn on your toy, and tell me when that is done. Then you can pair it in the popup.");
-
         var done = {};
 
         bluetoothStartScanning(function (info) {
             sendDebugMessage("Scan response: " + JSON.stringify(info));
-            done.done = 1;
-            deviceData = info;
+            if (!done.done) {
+                done.done = 1;
+                deviceData = info;
+            }
         });
+
+        sendVirtualAssistantMessage("Turn on your toy, and tell me when that is done. Then you can pair it in the popup.", false);
 
         sendDebugMessage("About to wait for done");
         waitForDone();
@@ -159,7 +161,7 @@ function setupNewBluetoothToy() {
         }
 
         if (deviceData && deviceData.allowedMessages && deviceData.device) {
-            console.log("deviceData = " + JSON.stringify(deviceData));
+            sendDebugMessage("deviceData = " + JSON.stringify(deviceData));
             break;
         }
         deviceData = null;
@@ -170,7 +172,7 @@ function setupNewBluetoothToy() {
         return;
     }
 
-    sendVirtualAssistantMessage('What sort of toy is ' + name + '(' + deviceData.device + ')? Cock ring, Butt plug, Stroker, Wand, Vibrator or Fucking Machine');
+    sendVirtualAssistantMessage('What sort of toy is ' + name + ' (' + deviceData.device + ')? Cock ring, Butt plug, Stroker, Wand, Vibrator or Fucking Machine', false);
     let options = ["Cock ring", "Butt plug", "Stroker", "Wand", "Vibrator", "Fucking machine"];
 
     answer = createAnswerInput(options);
@@ -211,12 +213,15 @@ function setupNewBluetoothToy() {
 
     sendDebugMessage("GOt toy type: " + toyType);
 
-    BLUETOOTH_TOYS.push(createBluetoothToy(name, toyType, deviceData.device, 
+    const newToy = createBluetoothToy(name, toyType, deviceData.device, 
         deviceData.allowedMessages["vibrate"],
         deviceData.allowedMessages["rotate"],
         deviceData.allowedMessages["linear"],
         deviceData.allowedMessages["batteryLevel"]
-        ));
+        );
+
+    newToy.deviceData = deviceData;
+    BLUETOOTH_TOYS.push(newToy);
 
     setVar(VARIABLE.HAS_BLUETOOTH_TOYS, true);
     saveBluetoothToys();
@@ -277,11 +282,66 @@ function createBluetoothToy(name, toyType, deviceName, vibrate, rotate, linear, 
         },
 
         toString: function () {
-            return serializeObject(this);
+            return JSON.stringify(this);
         },
 
         fromString: function (string) {
-            return deserializeObject(this, string);
+            var newObject = JSON.parse(string);
+            for (var prop in newObject) {
+                this[prop] = newObject[prop];
+            }
+            return this;
+        },
+
+        pairToy: function() {
+	    var deviceData;
+
+	    for (var loop = 0; loop < 2; loop++) {
+		if (loop > 0) {
+		    sendVirtualAssistantMessage("I don't see your toy. Please try again.");
+		}
+		sendVirtualAssistantMessage("Turn on your toy, and tell me when that is done. Then you can pair it in the popup.");
+
+		var done = {};
+
+		bluetoothStartScanning(function (info) {
+		    sendDebugMessage("Scan response: " + JSON.stringify(info));
+		    if (!done.done) {
+			done.done = 1;
+			deviceData = info;
+		    }
+		});
+
+		sendDebugMessage("About to wait for done");
+		waitForDone();
+		sendDebugMessage("Done waitForDone");
+
+		while (!done.done) {
+		    wait(0.2);
+		}
+
+		if (deviceData && deviceData.allowedMessages && deviceData.device) {
+		    sendDebugMessage("deviceData = " + JSON.stringify(deviceData));
+		    break;
+		}
+		deviceData = null;
+	    }
+
+            this.deviceData = deviceData;
+
+            return this.deviceData;
+        },
+
+        doRotate: function(ch1, ch2, ch3) {
+            // In percentages
+        },
+
+        doLinear: function(ch1, ch2, ch3) {
+            // In percentages
+        },
+
+        doVibrate: function(ch1, ch2, ch3) {
+            // In percentages
         },
 
         setToyOn: function (bool) {

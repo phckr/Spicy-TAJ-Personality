@@ -281,6 +281,15 @@ function fetchToy(toy, imagePath, amount = 0) {
             //Update the list of lovense toys
             fetchAvailableLovenseToys();
 
+            if (toy.getBluetoothToy) {
+                const bt = toy.getBluetoothToy();
+                if (bt) {
+                    if (bt.pairToy()) {
+			toy.bluetoothToy = bt;
+                    }
+                }
+            }
+
             break;
         } else if (answer.isLike("no", "don't", "can't")) {
             if (imagePath !== undefined) {
