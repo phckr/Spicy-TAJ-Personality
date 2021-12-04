@@ -29,7 +29,7 @@ function lockAwayChastityKey() {
 	    for (var i = 0; i < filesArray.length; i++) {
 		filesArray[i].delete();
 	    }
-	    tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination", { maskPercent: 30});
+	    tryTakePhoto("Tell me when you are holding the lock up to the webcam.", "Images/Spicy/Chastity/ChastityCombination/combination", { maskPercent: 30, delay: 3});
 	    sendVirtualAssistantMessage('%Good%');
 	} else {
 

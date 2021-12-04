@@ -1,5 +1,6 @@
 {
     sendVirtualAssistantMessage('Toy Settings Menu:', 0);
+    setCurrentSender(SENDER_ASSISTANT);
 
     let lobbyAnswer = createInput("Add new dildo", 'Edit dildos', 'Add new buttplug', 'Edit buttplugs', 
     'Add new chastity cage', 'Edit chastity cages', 'Add new Bluetooth toy', 'Edit Bluetooth toys',

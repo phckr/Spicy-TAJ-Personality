@@ -407,7 +407,7 @@ function setupNewDildo() {
         }
     }
 
-    if (canUseCamera() && tryTakePhoto("Hold your dildo in front of the camera and tell me when you are ready (or just paste an image in).", getDildoImagePath(name))) {
+    if (canUseCamera() && tryTakePhoto("Hold your dildo in front of the camera and tell me when you are ready (or just paste an image in).", getDildoImagePath(name), { delay: 3 })) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your dildo named like your dildo to your Toys/Dildos folder.', false);

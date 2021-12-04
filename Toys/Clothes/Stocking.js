@@ -89,7 +89,7 @@ function askForToyType(toyObject, types, reference = undefined) {
 }
 
 function createToyAndCheckImage(toy, toyObject) {
-    if (canUseCamera() && tryTakePhoto("Hold your " + toyObject.name + " in front of the camera and tell me when you are ready (or just paste an image in).", toy.getImagePath())) {
+    if (canUseCamera() && tryTakePhoto("Hold your " + toyObject.name + " in front of the camera and tell me when you are ready (or just paste an image in).", toy.getImagePath(), { delay: 3 })) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your ' + toyObject.name + ' named accordingly to your ' + toyObject.getImageFolder().getPath() +  ' folder.', false);

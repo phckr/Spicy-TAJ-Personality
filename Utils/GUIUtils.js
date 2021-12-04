@@ -64,7 +64,8 @@ function createListView() {
 }
 
 function createDialog(name) {
-    return {
+    sendDebugMessage("In createDialog");
+    const result = {
         dialog: new javafx.stage.Stage(),
 
         name: name,
@@ -88,7 +89,9 @@ function createDialog(name) {
         close: function() {
             this.dialog.close();
         }
-    }
+    };
+    sendDebugMessage("Created dialog");
+    return result;
 }
 
 function createGridPaneGUI() {
@@ -358,7 +361,11 @@ function displayDialog(createDialogFn, saveFn) {
     const RunnableClass = Java.type('java.lang.Runnable');
     let CustomRunnable = Java.extend(RunnableClass, {
         run: function () {
-            let dialog = createDialogFn();
+            var dialog;
+            sendDebugMessage("about to call createDIalogFn: " + createDialogFn);
+            var theDialog = createDialogFn();
+            sendDebugMessage("returned");
+            dialog = theDialog;
             if (isBrowserConnected()) {
                 dialog.readyUp(dialog.gridPane.gridPane);
                 showDialogAsHtml(dialog, saveFn);

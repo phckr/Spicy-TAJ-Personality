@@ -44,7 +44,7 @@ HIGH_HEEL_TOY.setupNewToy = function() {
 
     let heel = HIGH_HEEL_TOY.createToyInstance(name, height, color);
 
-    if (canUseCamera() && tryTakePhoto("Hold your high heels in front of the camera and tell me when you are ready (or just paste an image in).", heel.getImagePath())) {
+    if (canUseCamera() && tryTakePhoto("Hold your high heels in front of the camera and tell me when you are ready (or just paste an image in).", heel.getImagePath(), { delay: 3 })) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your high heel named like your high heel to your Toys/High Heels folder.', false);

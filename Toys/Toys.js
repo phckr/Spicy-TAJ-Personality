@@ -627,9 +627,10 @@ function createMultipleToy(name, variableName = undefined) {
 
         saveToyInstances: function () {
             let arrayList = new java.util.ArrayList();
+            var instances = this.toyInstances || toy.toyInstances;
 
-            for (let y = 0; y < this.toyInstances.length; y++) {
-                arrayList.add(this.toyInstances[y].toString());
+            for (let y = 0; y < instances.length; y++) {
+                arrayList.add(instances[y].toString());
             }
 
             setVar(variableName, arrayList);
@@ -1116,7 +1117,7 @@ function createToyListGUI(onClick, name, list) {
     const RunnableClass = Java.type('java.lang.Runnable');
     let CustomRunnable = Java.extend(RunnableClass, {
         run: function () {
-            const dialog = createDialog(name);
+            var dialog = createDialog(name);
 
             let gridPane = createGridPaneGUI();
             gridPane.setPadding(10, 10, 10, 10);
@@ -1238,7 +1239,7 @@ function toyCreateDialogFn(item, saver, extraAttrs) {
             COMBOBOX_ATTRIBUTES[prop] = extraAttrs[prop];
         }
                 
-        const dialog = createDialog(item.name);
+        var dialog = createDialog(item.name);
 
         let gridPane = createGridPaneGUI();
 

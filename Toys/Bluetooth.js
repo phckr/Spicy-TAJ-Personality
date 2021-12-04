@@ -123,7 +123,7 @@ function setupNewBluetoothToy() {
         }
     }
 
-    if (tryTakePhoto("Hold it in front of the camera and tell me when you are ready (or just paste an image in).", getBluetoothToyImagePath(name))) {
+    if (tryTakePhoto("Hold it in front of the camera and tell me when you are ready (or just paste an image in).", getBluetoothToyImagePath(name), { delay: 3 })) {
       sendVirtualAssistantMessage('This is what I saw', false, true);
     } else {
       sendVirtualAssistantMessage('Please make sure to add a picture of your cage named like your bluetooth toy to your Toys/Bluetooth Toys folder.', false);

@@ -177,11 +177,11 @@ function tryTakePhoto(prompt, pathname, options) {
         }
     }
     if (res) {
-        playSound("Audio/Spicy/SpecialSounds/CameraShutter.mp3");
+        var delay = options.delay;
         takeSubPhoto(function (data) {
             writeSubPhotoToFile(data, pathname);
             flag.complete = true;
-        });
+        }, { delay: delay, url: allocateTempUrl("Audio/Spicy/SpecialSounds/CameraShutter.mp3") });
         var start = Date.now();
         while (start + 60 * 1000 > Date.now() && !flag.complete) {
             wait(0.2);
@@ -244,10 +244,10 @@ function writeSubPhotoToFile(data, filePath) {
     return filePath;
 }
 
-function takeSubPhoto(done) {
+function takeSubPhoto(done, opts) {
     var name = Math.random().toString(36);
     browser_image_requests[name] = done;
-    sendWebControlJson(JSON.stringify({ photo: name }));
+    sendWebControlJson(JSON.stringify({ photo: name, photoDelay: opts.delay, photoSound: opts.url }));
 }
 
 function handlePasteSubPhoto(done) {
